@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 6.1 — Configurando o Ambiente Local | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    /* Rose - trilha color */
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    /* Blue - data boxes */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    /* Emerald / Red - fazer/evitar */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    /* Primary */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    /* Sky & Yellow */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    /* Nav overrides */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-rose-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-rose-400">Trilha 6</a>
+      <span>/</span>
+      <span class="text-rose-400">Módulo 6.1</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">MÓDULO 6.1</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🏠 Configurando o Ambiente Local</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Instalação completa do Ollama, download de modelos Qwen3, configuração de context window e primeiros testes com Python.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">Avançado</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">Prática</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">📥 Instalando Ollama</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Ollama é o runtime que roda LLMs localmente na sua máquina. Ele gerencia download, quantização e serving dos modelos via uma API REST em <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">localhost:11434</code>. A instalação é simples em qualquer plataforma — um comando e pronto.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Instalação do Ollama</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-rose-400"># Linux</span>
+curl -fsSL https://ollama.com/install.sh | sh
+
+<span class="text-rose-400"># Mac</span>
+brew install ollama
+
+<span class="text-rose-400"># Verificar</span>
+ollama --version
+ollama serve  <span class="text-rose-400"># inicia servidor em localhost:11434</span></code></pre>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Docker Alternative</h3>
+        <p class="text-neutral-300 leading-relaxed">Se preferir isolar o ambiente, use Docker: <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">docker run -d -v ollama:/root/.ollama -p 11434:11434 ollama/ollama</code>. Funciona igual, com a vantagem de não instalar nada no sistema host.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">🤖 Modelos Qwen</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A família Qwen3 da Alibaba é atualmente a melhor opção open-source para agentes de código. Modelos densos e MoE (Mixture of Experts) cobrem desde laptops com 8GB até workstations com 40GB+ de VRAM, todos com suporte nativo a tool calling.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Catálogo de Modelos Qwen3</h3>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-rose-500/30">
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Modelo</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Params</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Ativo</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Contexto</th>
+                <th class="text-left py-2 text-rose-400 font-semibold">VRAM</th>
+              </tr>
+            </thead>
+            <tbody class="text-neutral-300">
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">qwen3:8b</td>
+                <td class="py-2 pr-4">8.2B</td>
+                <td class="py-2 pr-4">8.2B</td>
+                <td class="py-2 pr-4">32K/131K</td>
+                <td class="py-2">~5GB</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">qwen3:14b</td>
+                <td class="py-2 pr-4">14B</td>
+                <td class="py-2 pr-4">14B</td>
+                <td class="py-2 pr-4">32K/131K</td>
+                <td class="py-2">~9GB</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">qwen3:32b</td>
+                <td class="py-2 pr-4">32B</td>
+                <td class="py-2 pr-4">32B</td>
+                <td class="py-2 pr-4">32K/131K</td>
+                <td class="py-2">~20GB</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">qwen3-coder:30b-a3b</td>
+                <td class="py-2 pr-4">30B MoE</td>
+                <td class="py-2 pr-4">3B</td>
+                <td class="py-2 pr-4">256K</td>
+                <td class="py-2">~20GB</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">qwen3-coder-next</td>
+                <td class="py-2 pr-4">80B MoE</td>
+                <td class="py-2 pr-4">3B</td>
+                <td class="py-2 pr-4">256K/1M</td>
+                <td class="py-2">~35-40GB</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium text-neutral-100">qwen3.5-9b</td>
+                <td class="py-2 pr-4">9B</td>
+                <td class="py-2 pr-4">9B</td>
+                <td class="py-2 pr-4">256K</td>
+                <td class="py-2">~6GB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm"><code class="text-neutral-300"><span class="text-rose-400"># Baixar modelos recomendados</span>
+ollama pull qwen3:8b
+ollama pull qwen3-coder:30b-a3b</code></pre>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 SWE-bench Scores</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">qwen3:8b:</strong> ~35% SWE-bench Verified — bom para tarefas simples e aprendizado</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">qwen3-coder:30b-a3b:</strong> ~55% — MoE eficiente, velocidade surpreendente para o tamanho</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">qwen3-coder-next:</strong> ~69.6% — quase no nível de Claude, mas roda local</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Referência:</strong> Claude Sonnet 4 atinge ~72-77% no SWE-bench Verified</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">💾 Escolhendo por Hardware</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A escolha do modelo depende diretamente da sua VRAM disponível. Modelos que não cabem na GPU são descarregados para RAM/CPU, ficando 10-50x mais lentos. A regra é simples: escolha o maior modelo que cabe inteiramente na sua GPU.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Guia de Recomendação por VRAM</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-rose-500/30">
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">VRAM</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Modelo Recomendado</th>
+                <th class="text-left py-2 text-rose-400 font-semibold">Por que</th>
+              </tr>
+            </thead>
+            <tbody class="text-neutral-300">
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">8GB</td>
+                <td class="py-2 pr-4">qwen3:8b</td>
+                <td class="py-2">Cabe confortável, bom tool calling</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">16GB</td>
+                <td class="py-2 pr-4">qwen3-coder:30b-a3b</td>
+                <td class="py-2">MoE: modelo grande, params ativos pequenos</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">24GB</td>
+                <td class="py-2 pr-4">qwen3:32b</td>
+                <td class="py-2">Melhor single-GPU</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium text-neutral-100">40GB+</td>
+                <td class="py-2 pr-4">qwen3-coder-next (Q4)</td>
+                <td class="py-2">69.6% SWE-bench, quase Claude</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Verificar VRAM Disponível</h3>
+        <p class="text-neutral-300 leading-relaxed">Use <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">nvidia-smi</code> para ver a VRAM total e em uso da sua GPU. Em Macs com Apple Silicon, a memória unificada é compartilhada entre CPU e GPU — o Ollama usa automaticamente o Metal para aceleração.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">📏 Context Window</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O Ollama usa um default de 4096 tokens de contexto — absurdamente pouco para um agente que precisa ler arquivos, manter histórico e processar tool calls. Configurar o <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">num_ctx</code> corretamente é obrigatório antes de qualquer uso sério.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Configurando Context Window</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm"><code class="text-neutral-300"><span class="text-rose-400"># Default é 4096 — MUITO POUCO para agentes!</span>
+<span class="text-rose-400"># Configurar antes de iniciar:</span>
+OLLAMA_CONTEXT_LENGTH=65536 ollama serve
+
+<span class="text-rose-400"># Ou por request:</span>
+options: {"num_ctx": 65536}
+
+<span class="text-rose-400"># KV cache compression (economiza 75% memória):</span>
+<span class="text-rose-400"># No Modelfile: PARAMETER kv_cache_type q4_0</span></code></pre>
+      </div>
+
+      <!-- Box: Alerta -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-3">⚠️ Armadilha do Default 4096</h3>
+        <p class="text-neutral-300 leading-relaxed">O default de 4096 tokens é a causa #1 de agentes que "esquecem" o contexto ou geram respostas sem sentido. Sempre configure <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">num_ctx</code> para pelo menos 32768 (32K) — idealmente 65536 (64K) se a VRAM permitir. Sem isso, o modelo trunca silenciosamente as mensagens antigas.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🐍 Python + ollama</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A biblioteca oficial <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">ollama</code> para Python fornece uma interface limpa para interagir com o servidor local. A API é compatível com o padrão OpenAI, facilitando migração futura entre modelos locais e cloud.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Setup Python + Ollama</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm"><code class="text-neutral-300">pip install ollama
+
+from ollama import chat
+
+response = chat(
+    model='qwen3:8b',
+    messages=[{'role': 'user', 'content': 'Hello!'}],
+    options={'num_ctx': 65536, 'temperature': 0.6}
+)
+print(response.message.content)</code></pre>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 AsyncClient para Async</h3>
+        <p class="text-neutral-300 leading-relaxed">Para aplicações assíncronas, use <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">from ollama import AsyncClient</code>. Isso permite fazer múltiplas chamadas em paralelo sem bloquear a thread principal — essencial para agentes que precisam responder rápido enquanto processam ferramentas em background.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">💬 Primeiro Chat</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Agora vamos testar tudo junto: um chat com streaming que mostra os tokens sendo gerados em tempo real. Se funcionar, seu ambiente está pronto para construir o agente.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Chat com Streaming</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm"><code class="text-neutral-300"><span class="text-rose-400"># Streaming</span>
+from ollama import chat
+
+stream = chat(
+    model='qwen3:8b',
+    messages=[{'role': 'user', 'content': 'Explique recursão'}],
+    stream=True,
+    options={'num_ctx': 65536}
+)
+for chunk in stream:
+    print(chunk['message']['content'], end='', flush=True)</code></pre>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Smoke Test</h3>
+        <p class="text-neutral-300 leading-relaxed">Se o streaming funciona e você vê tokens aparecendo em tempo real, seu ambiente está 100% pronto para o agente. Este é o "Hello World" do LLM local — se funciona aqui, funciona no loop do agente.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Ollama instalado e rodando em localhost:11434</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Modelos Qwen3 baixados — escolhidos por VRAM disponível</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Hardware mapeado — modelo ideal para cada faixa de VRAM</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Context window configurado — nunca usar o default 4096</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Python + ollama library instalados e funcionando</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Primeiro chat com streaming testado — ambiente pronto</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-rose-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">6.2 - 🔗 Tool Calling com LLMs Locais</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-6-2.html" class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

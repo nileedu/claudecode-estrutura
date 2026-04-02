@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trilha 5: Pratica - Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#14B8A6',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13, 148, 136, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #0d9488; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(244, 63, 94, 0.08); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Nucleo</span></a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Avancado</span></a>
+          <a href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"><span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span></a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-teal-400 bg-teal-500/10"><span class="sm:hidden">T5</span><span class="hidden sm:inline">Pratica</span></a>
+          <a href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"><span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span></a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-teal-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-teal-500/20 text-teal-400 text-xs font-semibold rounded-full mb-4">TRILHA 5</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🔧 Construindo um Agente Completo</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Codigo Python real, passo a passo. Cada modulo constroi uma parte do agente — ferramentas, memoria, seguranca — com exemplos copiar-colar que funcionam.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">4</div>
+          <div class="text-xs text-neutral-400">Modulos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">24</div>
+          <div class="text-xs text-neutral-400">Topicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">~2h</div>
+          <div class="text-xs text-neutral-400">Duracao</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">Intermediario</div>
+          <div class="text-xs text-neutral-400">Nivel</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- Navegacao Rapida -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-6">Navegacao Rapida</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="#modulo-5-1" class="group block bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-teal-500/30 transition-colors">
+          <span class="text-teal-400 font-bold">5.1</span>
+          <h3 class="text-lg font-semibold mt-2 group-hover:text-teal-400 transition-colors">📐 Arquitetando Seu Agente</h3>
+          <p class="text-neutral-400 text-sm mt-1">Escopo, stack e padroes de design essenciais</p>
+        </a>
+        <a href="#modulo-5-2" class="group block bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-teal-500/30 transition-colors">
+          <span class="text-teal-400 font-bold">5.2</span>
+          <h3 class="text-lg font-semibold mt-2 group-hover:text-teal-400 transition-colors">🔧 Construindo o Sistema de Ferramentas</h3>
+          <p class="text-neutral-400 text-sm mt-1">Classe base, ferramentas essenciais e registro</p>
+        </a>
+        <a href="#modulo-5-3" class="group block bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-teal-500/30 transition-colors">
+          <span class="text-teal-400 font-bold">5.3</span>
+          <h3 class="text-lg font-semibold mt-2 group-hover:text-teal-400 transition-colors">🧠 Construindo o Sistema de Memoria</h3>
+          <p class="text-neutral-400 text-sm mt-1">Sessao, persistencia, compressao e consolidacao</p>
+        </a>
+        <a href="#modulo-5-4" class="group block bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-teal-500/30 transition-colors">
+          <span class="text-teal-400 font-bold">5.4</span>
+          <h3 class="text-lg font-semibold mt-2 group-hover:text-teal-400 transition-colors">🛡️ Seguranca e Permissoes</h3>
+          <p class="text-neutral-400 text-sm mt-1">Sandbox, permissoes, validacao e auditoria</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="flex items-center mb-12">
+      <div class="flex-1 border-t border-dark-600"></div>
+      <span class="px-4 text-neutral-500 text-sm font-semibold">Conteudo Detalhado</span>
+      <div class="flex-1 border-t border-dark-600"></div>
+    </div>
+
+    <!-- Modulo 5.1 -->
+    <div id="modulo-5-1" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-teal-400 font-bold">5.1</span>
+          <span class="text-xs text-neutral-500">~30 min</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">📐 Arquitetando Seu Agente</h3>
+        <p class="text-neutral-400 text-sm">Definindo escopo, escolhendo a stack, identificando componentes essenciais e os padroes de design que sustentam o agente.</p>
+      </div>
+      <div class="divide-y divide-dark-600">
+        <!-- Topic 1 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg">🎯</span>
+            <div>
+              <span class="font-medium">Definindo o Escopo</span>
+              <span class="text-neutral-500 text-sm ml-2">- O que seu agente vai fazer e o que nao vai</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Definir claramente: agente de codigo? Assistente de pesquisa? O escopo define quais ferramentas e quanto de autonomia.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Escopo indefinido = agente que tenta tudo e nao faz nada bem.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Escopo, caso de uso, requisitos minimos.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 2 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg">⚡</span>
+            <div>
+              <span class="font-medium">Stack Tecnologica</span>
+              <span class="text-neutral-500 text-sm ml-2">- Python + Ollama como base</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Python como linguagem principal, Ollama como backend local, biblioteca ollama para comunicacao.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Python tem o melhor ecossistema para IA; Ollama roda modelos localmente sem custo.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Python, Ollama, pip install ollama, localhost:11434.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 3 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg">🧩</span>
+            <div>
+              <span class="font-medium">Componentes Essenciais</span>
+              <span class="text-neutral-500 text-sm ml-2">- Loop, tools, memory, security, context</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Os 5 componentes minimos: AgentLoop, ToolExecutor, ContextManager, MemoryStore, PermissionController.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Inspirado nos 8 subsistemas do Claude Code, simplificado para implementacao pratica.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Componentes, responsabilidade unica, modularidade.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 4 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg">📦</span>
+            <div>
+              <span class="font-medium">Padrao: Tool Registry</span>
+              <span class="text-neutral-500 text-sm ml-2">- Registro centralizado de ferramentas</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Dicionario que mapeia nome → funcao + schema. Inspirado no padrao universal de ferramentas do Claude Code.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Registro centralizado permite descoberta, validacao e execucao padronizada.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Registry pattern, tool_map, tool_schemas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 5 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg">📦</span>
+            <div>
+              <span class="font-medium">Padrao: Context Manager</span>
+              <span class="text-neutral-500 text-sm ml-2">- Gerenciador de janela de contexto</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Classe que monitora tokens usados, comprime quando necessario, gerencia sliding window.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Sem gerenciamento, contexto estoura em sessoes longas.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Token counting, sliding window, compression trigger.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 6 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg">📦</span>
+            <div>
+              <span class="font-medium">Padrao: Permission Controller</span>
+              <span class="text-neutral-500 text-sm ml-2">- Controlador de permissoes</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Classe com regras allow/deny/ask por ferramenta. Configuravel via JSON. Inspirado nas 5 camadas do Claude Code.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Seguranca nao e opcional — e requisito.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Permission rules, JSON config, allow/deny/ask.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button onclick="openModal('modal-5-1')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+        <a href="modulo-5-1.html" class="px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition-colors">Ver Completo</a>
+      </div>
+    </div>
+
+    <!-- Modulo 5.2 -->
+    <div id="modulo-5-2" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-teal-400 font-bold">5.2</span>
+          <span class="text-xs text-neutral-500">~30 min</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">🔧 Construindo o Sistema de Ferramentas</h3>
+        <p class="text-neutral-400 text-sm">Classe base, ferramentas de arquivo e shell, busca em codigo, registro e descoberta, execucao paralela vs sequencial.</p>
+      </div>
+      <div class="divide-y divide-dark-600">
+        <!-- Topic 1 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg">🏗️</span>
+            <div>
+              <span class="font-medium">Classe Base Tool</span>
+              <span class="text-neutral-500 text-sm ml-2">- A interface que toda ferramenta implementa</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Interface Python com name, description, parameters, execute(). Inspirada no padrao universal do Claude Code.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Consistencia permite trocar/adicionar ferramentas sem reescrever o loop.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Interface, classe base, contrato.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 2 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg">📄</span>
+            <div>
+              <span class="font-medium">read_file e write_file</span>
+              <span class="text-neutral-500 text-sm ml-2">- Leitura e escrita de arquivos com validacao</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">read_file: Path(path).read_text(). write_file: mkdir + write_text. Com tratamento de erros e limites de tamanho.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Sao as ferramentas mais usadas em qualquer agente de codigo.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Path, encoding, error handling, size limits.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 3 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg">💻</span>
+            <div>
+              <span class="font-medium">run_shell com Seguranca</span>
+              <span class="text-neutral-500 text-sm ml-2">- Execucao de comandos com sandbox</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">subprocess.run com capture_output, timeout, e validacao do comando. Inspirado nas 23+ verificacoes da BashTool.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Shell e o maior vetor de ataque — precisa de sandbox.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">subprocess, timeout, command validation, stdout/stderr.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 4 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg">🔍</span>
+            <div>
+              <span class="font-medium">search_in_files</span>
+              <span class="text-neutral-500 text-sm ml-2">- Busca tipo grep em codigo</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Percorre arquivos com glob, busca com regex, retorna path:line:content. Como o Grep do Claude Code.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Encontrar codigo e essencial antes de editar.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">glob, regex, re.search, file traversal.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 5 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg">📋</span>
+            <div>
+              <span class="font-medium">Registro e Descoberta</span>
+              <span class="text-neutral-500 text-sm ml-2">- TOOL_MAP e TOOL_SCHEMAS</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">TOOL_MAP = {name: function}, TOOL_SCHEMAS = [{type, function: {name, description, parameters}}]. OpenAI-compatible.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">O LLM precisa do schema para saber quais ferramentas existem e como chama-las.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Tool registry, JSON Schema, OpenAI format.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 6 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg">⚡</span>
+            <div>
+              <span class="font-medium">Execucao Paralela vs Sequencial</span>
+              <span class="text-neutral-500 text-sm ml-2">- Quando rodar em paralelo</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Read-only tools (read, search) podem rodar em paralelo. Write tools (edit, shell) devem ser sequenciais. Como isConcurrencySafe().</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Paralelismo seguro = performance sem bugs.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Concurrency safety, parallel execution, exclusive access.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button onclick="openModal('modal-5-2')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+        <a href="modulo-5-2.html" class="px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition-colors">Ver Completo</a>
+      </div>
+    </div>
+
+    <!-- Modulo 5.3 -->
+    <div id="modulo-5-3" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-teal-400 font-bold">5.3</span>
+          <span class="text-xs text-neutral-500">~30 min</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">🧠 Construindo o Sistema de Memoria</h3>
+        <p class="text-neutral-400 text-sm">Memoria de sessao, persistencia, 4 tipos de memoria, compressao com sliding window e resumo, consolidacao automatica.</p>
+      </div>
+      <div class="divide-y divide-dark-600">
+        <!-- Topic 1 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg">💬</span>
+            <div>
+              <span class="font-medium">Memoria de Sessao</span>
+              <span class="text-neutral-500 text-sm ml-2">- Lista de mensagens da conversa atual</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Lista de dicts [{role, content}] que cresce a cada turno. E o historico da conversa.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Sem historico, cada mensagem e isolada — o agente esquece o que fez.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">messages list, role (system/user/assistant/tool), append.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 2 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg">💾</span>
+            <div>
+              <span class="font-medium">Persistencia com JSON/SQLite</span>
+              <span class="text-neutral-500 text-sm ml-2">- Salvando sessoes entre reinicios</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Salvar messages em JSON por sessao. Ou SQLite para busca e organizacao. Classe AgentMemory com save/load.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Sem persistencia, fechar o terminal perde tudo.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">JSON files, SQLite, session_id, save/load.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 3 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg">📝</span>
+            <div>
+              <span class="font-medium">4 Tipos de Memoria</span>
+              <span class="text-neutral-500 text-sm ml-2">- Usuario, Feedback, Projeto, Referencia</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Memoria do Usuario (preferencias), Feedback (correcoes), Projeto (contexto ativo), Referencia (links externos). Inspirado no Claude Code.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Tipos diferentes servem propositos diferentes — nao e tudo igual.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">4 tipos, MEMORY.md, indice + topicos.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 4 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg">📦</span>
+            <div>
+              <span class="font-medium">Compressao: Sliding Window</span>
+              <span class="text-neutral-500 text-sm ml-2">- Mantendo apenas as N mensagens recentes</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Quando mensagens excedem limite, manter system + ultimas N. Descartar as mais antigas.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Simples, previsivel, funciona bem para janelas pequenas.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Sliding window, token budget, trim_messages().</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 5 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg">🤖</span>
+            <div>
+              <span class="font-medium">Compressao: Resumo com LLM</span>
+              <span class="text-neutral-500 text-sm ml-2">- Usando o proprio modelo para resumir</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Usar o proprio LLM (modelo rapido) para resumir o historico antigo em poucas frases.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Preserva contexto melhor que simplesmente descartar.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Summarization, fast model, context packing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 6 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg">🌙</span>
+            <div>
+              <span class="font-medium">Consolidacao Automatica</span>
+              <span class="text-neutral-500 text-sm ml-2">- AutoDream simplificado em Python</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">A cada N sessoes, consolidar memorias: ler sessoes recentes → extrair fatos → atualizar arquivos de topicos → podar indice.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Memorias de curto prazo viram longo prazo, como no sono.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">AutoDream simplificado, consolidacao, poda.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button onclick="openModal('modal-5-3')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+        <a href="modulo-5-3.html" class="px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition-colors">Ver Completo</a>
+      </div>
+    </div>
+
+    <!-- Modulo 5.4 -->
+    <div id="modulo-5-4" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-teal-400 font-bold">5.4</span>
+          <span class="text-xs text-neutral-500">~30 min</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">🛡️ Seguranca e Permissoes</h3>
+        <p class="text-neutral-400 text-sm">Por que seguranca e obrigatoria, sandbox, sistema allow/deny/ask, validacao de comandos, limites de recursos e auditoria.</p>
+      </div>
+      <div class="divide-y divide-dark-600">
+        <!-- Topic 1 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg">⚠️</span>
+            <div>
+              <span class="font-medium">Por Que Seguranca e Obrigatoria</span>
+              <span class="text-neutral-500 text-sm ml-2">- Agentes executam codigo — o risco e real</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Agentes executam comandos reais no seu sistema. Um rm -rf / ou exfiltracao de dados e possivel sem protecao.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Seguranca nao e feature — e requisito para qualquer agente que roda comandos.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Attack surface, risk assessment, defense in depth.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 2 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg">🏰</span>
+            <div>
+              <span class="font-medium">Sandbox com subprocess</span>
+              <span class="text-neutral-500 text-sm ml-2">- Isolamento de execucao de comandos</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">subprocess.run com shell=True controlado: timeout, working directory restrito, environment limpo.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Isolamento limita o dano de comandos maliciosos ou errados.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">subprocess, sandbox, restricted environment.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 3 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg">🔐</span>
+            <div>
+              <span class="font-medium">Sistema allow/deny/ask</span>
+              <span class="text-neutral-500 text-sm ml-2">- Permissoes configuraveis por ferramenta</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">JSON com regras por ferramenta: {"read_file": "allow", "run_shell": "ask", "delete_file": "deny"}.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Equilibrio entre automacao e controle.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Permission config, allow/deny/ask, user confirmation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 4 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg">🔍</span>
+            <div>
+              <span class="font-medium">Validacao de Comandos</span>
+              <span class="text-neutral-500 text-sm ml-2">- Analisar antes de executar</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Antes de executar run_shell, analisar o comando: bloquear rm -rf, dd, wget para destinos suspeitos, etc.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">A BashTool do Claude Code tem 23+ verificacoes por um motivo.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Command parsing, blocklist, pattern matching.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 5 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg">⏱️</span>
+            <div>
+              <span class="font-medium">Limites de Recursos</span>
+              <span class="text-neutral-500 text-sm ml-2">- Timeout, memoria e rate limiting</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Timeout por ferramenta (30s default), limite de memoria, rate limit de chamadas de API.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Evitar que o agente trave, consuma recursos demais ou gere custos inesperados.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Timeout, memory limit, rate limiting.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 6 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg">📝</span>
+            <div>
+              <span class="font-medium">Auditoria e Logging</span>
+              <span class="text-neutral-500 text-sm ml-2">- Registrando tudo que o agente faz</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-teal-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Registrar toda chamada de ferramenta com timestamp, parametros, resultado e duracao.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Observabilidade e crucial para depurar, auditar e melhorar o agente.</p>
+              </div>
+              <div>
+                <span class="text-teal-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Logging, audit trail, structured logs.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button onclick="openModal('modal-5-4')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+        <a href="modulo-5-4.html" class="px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition-colors">Ver Completo</a>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="flex justify-between items-center mt-12">
+      <a href="../trilha4/index.html" class="px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Trilha Anterior</a>
+      <a href="../trilha6/index.html" class="px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors">Proxima Trilha →</a>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Modal 5.1 -->
+  <div id="modal-5-1" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-teal-400 font-bold">5.1</span>
+          <span class="font-semibold">📐 Arquitetando Seu Agente</span>
+        </div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-5-1.html" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- Modal 5.2 -->
+  <div id="modal-5-2" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-teal-400 font-bold">5.2</span>
+          <span class="font-semibold">🔧 Construindo o Sistema de Ferramentas</span>
+        </div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-5-2.html" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- Modal 5.3 -->
+  <div id="modal-5-3" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-teal-400 font-bold">5.3</span>
+          <span class="font-semibold">🧠 Construindo o Sistema de Memoria</span>
+        </div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-5-3.html" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- Modal 5.4 -->
+  <div id="modal-5-4" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-teal-400 font-bold">5.4</span>
+          <span class="font-semibold">🛡️ Seguranca e Permissoes</span>
+        </div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-5-4.html" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

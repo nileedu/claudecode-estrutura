@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 5.4 — Segurança e Permissões | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0d9488',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    /* Teal - trilha color */
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13, 148, 136, 0.18); }
+    /* Blue - data boxes */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    /* Emerald / Red - fazer/evitar */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    /* Primary */
+    html:not(.dark) .text-primary { color: #0d9488; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    /* Sky & Yellow */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    /* Nav overrides */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-teal-400 bg-teal-500/10">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-teal-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-teal-400">Trilha 5</a>
+      <span>/</span>
+      <span class="text-teal-400">Módulo 5.4</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-teal-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-teal-500/20 text-teal-400 text-xs font-semibold rounded-full mb-4">MÓDULO 5.4</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🛡️ Segurança e Permissões</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Um agente com acesso ao terminal pode causar danos reais. Implemente sandbox, validação de comandos, sistema de permissões e auditoria para manter seu agente seguro e controlável.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">Intermediário</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">Prática</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">⚠️ Por Que Segurança é Obrigatória</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Um agente de IA com acesso a shell, sistema de arquivos e rede não é um chatbot inofensivo — é um programa que pode causar danos irreversíveis. O LLM pode alucinar um comando destrutivo, ser manipulado por prompt injection ou simplesmente interpretar mal uma instrução. Segurança não é feature opcional — é pré-requisito.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_seguranca_pt.png" alt="Diagrama do sistema de segurança em camadas" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">O sistema de segurança atua em múltiplas camadas — da validação de input à auditoria de output.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Os 5 Riscos Reais de um Agente Sem Proteção</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">rm -rf /:</strong> o agente pode executar comandos destrutivos que apagam dados ou o sistema inteiro</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Exfiltração de dados:</strong> curl/wget podem enviar arquivos sensíveis para servidores externos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Instalação de malware:</strong> download e execução de scripts não verificados da internet</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Exposição de credenciais:</strong> cat ~/.ssh/id_rsa, leitura de .env, tokens de API nos logs</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Loop infinito:</strong> o agente pode entrar em loop consumindo CPU, disco e tokens sem limites</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Alerta -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-3">🚨 Alerta: Nunca Rode Sem Proteção</h3>
+        <p class="text-neutral-300 leading-relaxed">O Claude Code, mesmo com todas as suas camadas de segurança, já teve incidentes reportados. Um agente caseiro sem proteção é uma bomba-relógio. Implemente TODAS as camadas deste módulo antes de dar acesso real ao shell. Comece em sandbox isolada e vá liberando gradualmente.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">🏰 Sandbox com subprocess</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A primeira linha de defesa é isolar a execução. Em vez de rodar comandos no mesmo processo e ambiente do agente, usamos <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">subprocess.run</code> com ambiente limpo, diretório restrito, timeout e captura de output. Se o comando explodir, o agente sobrevive.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Execução Isolada com subprocess</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>def safe_shell(command, timeout=30, cwd='/tmp/agent-sandbox'):
+    env = {k: v for k, v in os.environ.items()
+           if k in ['PATH', 'HOME', 'LANG']}
+    result = subprocess.run(
+        command, shell=True,
+        capture_output=True, text=True,
+        timeout=timeout, cwd=cwd, env=env
+    )
+    output = result.stdout + result.stderr
+    return output[:10000]  # truncate huge outputs</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Ambiente limpo:</strong> só passa PATH, HOME e LANG — sem tokens, secrets ou configs sensíveis</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Diretório isolado:</strong> roda em /tmp/agent-sandbox, não no diretório do usuário</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Timeout:</strong> 30 segundos por padrão — mata processos que travam ou fazem loop</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Truncamento:</strong> limita output a 10K chars — evita que logs enormes consumam toda a context window</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Docker para Sandbox Robusta</h3>
+        <p class="text-neutral-300 leading-relaxed">Para isolamento real, considere rodar comandos dentro de um container Docker descartável. O subprocess é a base, mas não impede acesso a rede ou filesystem fora do cwd. Com Docker, você controla CPU, memória, rede e filesystem. O Claude Code usa containerd internamente para suas operações mais sensíveis.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">🔐 Sistema allow/deny/ask</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Nem toda ferramenta precisa do mesmo nível de controle. Leitura de arquivos é segura — pode rodar sem perguntar. Escrita e execução de shell são perigosas — devem pedir confirmação. Algumas operações são proibidas sempre. O sistema allow/deny/ask do Claude Code implementa exatamente essa gradação.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Controller de Permissões</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code># permissions.json
+{"read_file": "allow", "write_file": "ask",
+ "run_shell": "ask", "search_in_files": "allow"}
+
+class PermissionController:
+    def check(self, tool_name: str) -> str:
+        rule = self.rules.get(tool_name, 'ask')
+        if rule == 'allow': return 'granted'
+        if rule == 'deny': return 'denied'
+        # ask = prompt user
+        answer = input(f"Allow {tool_name}? [y/n]: ")
+        return 'granted' if answer.lower() == 'y' else 'denied'</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">allow:</strong> executa sem perguntar — para operações seguras como leitura e busca</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">deny:</strong> bloqueia sempre — para operações proibidas por política</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">ask:</strong> pede confirmação ao usuário — o padrão para operações desconhecidas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Default = ask:</strong> se uma ferramenta não está na lista, assume que precisa de confirmação</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Como o Claude Code Implementa Permissões</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">settings.json:</strong> regras globais e por projeto definidas pelo usuário</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Regex matching:</strong> regras podem usar padrões — ex: <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">allow: Bash(git *)</code> permite qualquer comando git</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">"Remember" option:</strong> quando o usuário aprova, pode salvar a decisão para não perguntar de novo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Hierarquia:</strong> deny > allow > ask — deny sempre vence, independente de outras regras</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">🔍 Validação de Comandos</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Mesmo com permissão "ask", o usuário pode aprovar algo perigoso sem perceber. A validação de comandos é uma camada adicional que analisa o conteúdo do comando antes da execução e bloqueia padrões conhecidamente destrutivos — independente da permissão concedida.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Blocklist de Padrões Perigosos</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>DANGEROUS_PATTERNS = [
+    r'rm\s+-rf\s+/',  r'dd\s+if=',  r'mkfs',  r':\(\)\{',
+    r'curl.*\|\s*sh',  r'wget.*\|\s*bash',  r'chmod\s+777',
+    r'>\s*/dev/sd',  r'shutdown',  r'reboot'
+]
+
+def validate_command(command):
+    for pattern in DANGEROUS_PATTERNS:
+        if re.search(pattern, command):
+            return False, f"BLOCKED: matches {pattern}"
+    return True, "OK"</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Regex matching:</strong> cada padrão usa expressão regular para detectar variações do comando</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Fork bomb:</strong> <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">:(){ :|:& };:</code> é detectado pelo padrão <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">:\(\)\{</code></p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Pipe para shell:</strong> <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">curl | sh</code> e <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">wget | bash</code> são vetores clássicos de RCE</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Extensível:</strong> adicione padrões específicos do seu contexto (ex: <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">DROP TABLE</code>, <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">git push -f</code>)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Alerta -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-3">🚨 O Claude Code Tem 23+ Verificações</h3>
+        <p class="text-neutral-300 leading-relaxed">Os 10 padrões acima são apenas o começo. O Claude Code implementa mais de 23 verificações de segurança, incluindo detecção de escalação de privilégio, acesso a diretórios sensíveis (/etc, /root, ~/.ssh), manipulação de git history e muito mais. Trate essa lista como ponto de partida — seu agente precisará de verificações específicas para o domínio em que atua.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">⏱️ Limites de Recursos</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Segurança não é só sobre comandos perigosos — é também sobre consumo descontrolado. Um agente pode entrar em loop infinito, gerar outputs gigantes, ler arquivos enormes ou consumir todo o orçamento de tokens em uma sessão. Limites de recursos previnem esses cenários.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Constantes de Proteção</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>MAX_ITERATIONS = 30
+TOOL_TIMEOUT = 60        # seconds
+MAX_OUTPUT_SIZE = 10000  # chars
+MAX_FILE_SIZE = 1_000_000  # 1MB</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">MAX_ITERATIONS:</strong> limite de iterações do loop principal — para o agente mesmo se o LLM nunca disser "pronto"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">TOOL_TIMEOUT:</strong> cada ferramenta tem um tempo máximo — se exceder, é morta e o erro é reportado</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">MAX_OUTPUT_SIZE:</strong> trunca outputs longos para não poluir a context window</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">MAX_FILE_SIZE:</strong> recusa ler/escrever arquivos maiores que 1MB — evita binários e logs gigantes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Ajuste Conforme o Uso</h3>
+        <p class="text-neutral-300 leading-relaxed">Esses valores são pontos de partida razoáveis. Para agentes de CI/CD, aumente o TOOL_TIMEOUT para 120s (builds demoram). Para agentes de análise de dados, aumente MAX_FILE_SIZE para 10MB. O importante é que os limites EXISTAM — os valores exatos dependem do seu caso de uso. Sem limites, qualquer bug vira catástrofe.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">📝 Auditoria e Logging</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A última camada de segurança é a visibilidade. Mesmo com todas as proteções, você precisa saber exatamente o que o agente fez, quando fez e quanto demorou. Logs estruturados permitem auditar sessões, detectar padrões suspeitos e debugar problemas em produção.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Logging Estruturado de Tool Calls</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>import logging
+
+logger = logging.getLogger('agent')
+
+def log_tool_call(tool_name, args, result, duration):
+    logger.info(json.dumps({
+        'timestamp': datetime.now().isoformat(),
+        'tool': tool_name,
+        'args': args,
+        'result_length': len(str(result)),
+        'duration_ms': int(duration * 1000),
+    }))</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">JSON estruturado:</strong> cada log é um JSON parseável — facilita busca e análise posterior</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Timestamp ISO:</strong> permite reconstruir a timeline exata de cada sessão</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">result_length:</strong> loga o tamanho do resultado, não o conteúdo — evita logs gigantes</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">duration_ms:</strong> identifica ferramentas lentas e possíveis gargalos de performance</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Implementar TODAS as camadas: sandbox, permissões, validação, limites e logs</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Logar toda tool call com timestamp, args e duração</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Testar com comandos maliciosos intencionalmente antes de liberar</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Revisar logs regularmente para detectar padrões anômalos</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Confiar que o LLM "nunca faria algo perigoso" — alucinações acontecem</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Logar credenciais, tokens ou conteúdo de arquivos sensíveis</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Desabilitar segurança para "ir mais rápido" em desenvolvimento</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Rodar o agente com permissões de root ou admin</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Segurança é obrigatória — um agente sem proteção pode causar danos irreversíveis</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Sandbox com subprocess isola execução com ambiente limpo, timeout e diretório restrito</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Sistema allow/deny/ask gradua o controle por ferramenta — default é "ask"</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Validação de comandos bloqueia padrões perigosos via regex antes da execução</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Limites de recursos previnem loops infinitos, outputs gigantes e consumo descontrolado</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Auditoria com logging estruturado permite reconstruir e analisar cada sessão</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-teal-400 mb-2">Próxima Trilha:</h3>
+          <p class="text-neutral-300">Trilha 6 - 🏠 Rodando Local — LLMs no seu hardware com Ollama e modelos open-source</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="../trilha6/index.html" class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors">Próxima Trilha: Local →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

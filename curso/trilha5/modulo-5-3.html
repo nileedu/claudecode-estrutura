@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 5.3 — Construindo o Sistema de Memória | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0d9488',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    /* Teal - trilha color */
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13, 148, 136, 0.18); }
+    /* Blue - data boxes */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    /* Emerald / Red - fazer/evitar */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    /* Primary */
+    html:not(.dark) .text-primary { color: #0d9488; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    /* Sky & Yellow */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    /* Nav overrides */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-teal-400 bg-teal-500/10">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-teal-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-teal-400">Trilha 5</a>
+      <span>/</span>
+      <span class="text-teal-400">Módulo 5.3</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-teal-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-teal-500/20 text-teal-400 text-xs font-semibold rounded-full mb-4">MÓDULO 5.3</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧠 Construindo o Sistema de Memória</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Um agente sem memória repete erros, esquece contexto e perde eficiência a cada sessão. Implemente os 4 tipos de memória e aprenda a comprimir contexto quando a janela enche.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">Intermediário</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">Prática</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">💬 Memória de Sessão</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A forma mais básica de memória é a lista de mensagens da sessão atual. Cada interação — pedido do usuário, resposta do LLM, resultado de ferramenta — é adicionada à lista. Essa lista é o contexto que o modelo recebe a cada chamada. Sem ela, o agente não saberia o que aconteceu 2 segundos atrás.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Lista de Mensagens — A Base da Memória</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>messages = [
+    {'role': 'system', 'content': 'You are a coding agent...'},
+    {'role': 'user', 'content': 'Fix the bug in main.py'},
+]
+
+# After each LLM response:
+messages.append({'role': 'assistant', 'content': response})
+
+# After each tool result:
+messages.append({'role': 'tool', 'content': result, 'name': tool_name})</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">System message:</strong> define o comportamento do agente — é a primeira mensagem e raramente muda</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">User/Assistant:</strong> o diálogo vai crescendo a cada iteração do loop</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tool results:</strong> saída das ferramentas é adicionada como mensagens do tipo <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">tool</code></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Atenção ao Crescimento</h3>
+        <p class="text-neutral-300 leading-relaxed">A lista de mensagens cresce indefinidamente. Uma sessão longa pode facilmente ultrapassar o limite de contexto do modelo. Nos tópicos 4 e 5 deste módulo, veremos como lidar com isso usando sliding window e resumo com LLM. Por enquanto, implemente o append básico e monitore o tamanho.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">💾 Persistência</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Memória de sessão morre quando o processo fecha. Para que o agente "lembre" de sessões anteriores, precisamos salvar em disco. A abordagem mais simples: um arquivo JSON por sessão. Sem banco de dados, sem complexidade — apenas arquivos que você pode inspecionar manualmente.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Persistência com JSON — Uma Sessão por Arquivo</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>class AgentMemory:
+    def __init__(self, session_dir='~/.agent/sessions'):
+        self.dir = Path(session_dir).expanduser()
+        self.dir.mkdir(parents=True, exist_ok=True)
+        self.session_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+        self.messages = []
+
+    def save(self):
+        (self.dir / f'{self.session_id}.json').write_text(
+            json.dumps({'messages': self.messages}, indent=2))
+
+    def load(self, session_id):
+        data = json.loads((self.dir / f'{session_id}.json').read_text())
+        self.messages = data['messages']</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Um arquivo por sessão:</strong> nomeia pelo timestamp, fácil de listar e debugar</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">JSON legível:</strong> você pode abrir com qualquer editor e ver exatamente o que aconteceu</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Save incremental:</strong> chame <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">save()</code> após cada interação para não perder dados em crash</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 JSON vs SQLite — Trade-offs</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">JSON:</strong> zero dependências, legível, fácil de debugar. Ruim para busca e sessões muito grandes (>50MB)</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">SQLite:</strong> busca rápida, ACID, compacto. Mais complexo, não legível direto, precisa de schema</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Recomendação:</strong> comece com JSON. Migre para SQLite só quando tiver centenas de sessões ou precisar de busca</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Claude Code usa:</strong> JSON para sessões + SQLite para índice de busca — o melhor dos dois mundos</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">📝 4 Tipos de Memória</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O Claude Code não tem apenas uma memória genérica — ele separa em 4 tipos temáticos, cada um com propósito diferente. Essa separação facilita a manutenção, evita poluição entre contextos e permite que o agente carregue apenas o que é relevante para a tarefa atual.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_memoria_pt.png" alt="Diagrama dos 4 tipos de memória do agente" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Os 4 tipos de memória organizam o conhecimento do agente por tema e permanência.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Implementação dos 4 Tipos</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code># memory/user.md — quem é o usuário
+# memory/feedback.md — correções e acertos
+# memory/project.md — contexto ativo
+# memory/reference.md — links externos
+# MEMORY.md — índice (~150 chars/linha)</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">user.md:</strong> preferências, estilo de código, stack favorita — o "perfil" do usuário</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">feedback.md:</strong> quando o usuário corrige o agente, a correção é salva aqui para não repetir o erro</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">project.md:</strong> arquitetura do projeto atual, decisões técnicas, convenções — contexto ativo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">reference.md:</strong> links para docs, APIs externas, exemplos — referências que o agente pode consultar</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">MEMORY.md (índice):</strong> lista resumida de todos os fatos (~150 chars/linha) — o que cabe na context window</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Mantenha o Índice Curto</h3>
+        <p class="text-neutral-300 leading-relaxed">O MEMORY.md é injetado no system prompt a cada chamada. Se ele ficar grande demais, consome contexto precioso. Limite cada linha a ~150 caracteres e o arquivo total a ~200 linhas. Use os arquivos de tópico (user.md, feedback.md etc.) para o conteúdo detalhado — o índice só aponta para eles.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">📦 Compressão: Sliding Window</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Quando a lista de mensagens ultrapassa o limite de contexto, a técnica mais simples é a sliding window: manter as mensagens do sistema + as N mensagens mais recentes que cabem no orçamento de tokens. Mensagens antigas são descartadas silenciosamente. É brutal, mas funciona.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_compactacao_pt.png" alt="Diagrama de compactação por sliding window" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Sliding window mantém as mensagens mais recentes e descarta as antigas quando o contexto enche.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Implementação de Sliding Window</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>def trim_messages(messages, max_tokens=30000, chars_per_token=3.5):
+    system = [m for m in messages if m['role'] == 'system']
+    non_system = [m for m in messages if m['role'] != 'system']
+    budget = max_tokens * chars_per_token
+    kept = []
+    used = sum(len(str(m)) for m in system)
+    for msg in reversed(non_system):
+        if used + len(str(msg)) > budget: break
+        kept.insert(0, msg)
+        used += len(str(msg))
+    return system + kept</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">System messages preservadas:</strong> nunca descarte o system prompt — ele define o comportamento</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Iteração reversa:</strong> começa pelas mensagens mais recentes, que são mais relevantes</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Estimativa de tokens:</strong> ~3.5 chars/token é uma boa aproximação para inglês; para português, use ~4.0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Limitações da Sliding Window</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Perda de contexto:</strong> decisões importantes tomadas no início da sessão podem ser perdidas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Sem gradação:</strong> uma mensagem está 100% dentro ou 100% fora — não há "resumo parcial"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Solução híbrida:</strong> combine sliding window com resumo (tópico 5) para manter o essencial das mensagens antigas</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🤖 Compressão: Resumo com LLM</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Em vez de simplesmente descartar mensagens antigas, podemos pedir para um LLM resumi-las. O resumo preserva as decisões e o contexto essencial em muito menos tokens. O Claude Code chama isso de "compactação" e usa internamente quando o contexto atinge ~80% do limite.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Resumo Automático com LLM</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>def summarize_history(messages, model='qwen3:4b'):
+    history = '\n'.join(
+        f"{m['role']}: {str(m['content'])[:500]}"
+        for m in messages if m['role'] != 'system'
+    )
+    response = chat(
+        model=model,
+        messages=[{
+            'role': 'user',
+            'content': f'Summarize concisely:\n{history}'
+        }],
+        options={'num_ctx': 8192}
+    )
+    return response.message.content</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Modelo pequeno:</strong> use um modelo rápido e barato para o resumo — não precisa ser o modelo principal</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Truncamento preventivo:</strong> limita cada mensagem a 500 chars antes de enviar para resumo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Resultado:</strong> o resumo substitui as N mensagens antigas, liberando espaço no contexto</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Use Modelo Rápido/Pequeno para Resumos</h3>
+        <p class="text-neutral-300 leading-relaxed">Não gaste tokens do seu modelo principal (Sonnet, GPT-4) para comprimir contexto. Use um modelo local como Qwen3:4b ou Llama 3.2:3b via Ollama. O resumo não precisa ser perfeito — precisa ser rápido e capturar os pontos principais. Um modelo de 4B parâmetros faz isso em menos de 2 segundos.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">🌙 Consolidação Automática</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O Claude Code tem um sistema chamado AutoDream: periodicamente, ele analisa sessões recentes, extrai fatos importantes e atualiza os arquivos de memória. Podemos implementar uma versão simplificada que roda a cada 24h (ou manualmente) e consolida o conhecimento acumulado.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">AutoDream Simplificado</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm text-neutral-300 mb-4"><code>def auto_consolidate(session_dir, memory_dir):
+    """Run every 24h if 5+ new sessions exist"""
+    sessions = sorted(Path(session_dir).glob('*.json'))
+    recent = sessions[-5:]
+    facts = []
+    for s in recent:
+        data = json.loads(s.read_text())
+        # Extract key decisions, files touched, errors
+        facts.extend(extract_facts(data['messages']))
+    # Update memory topic files
+    update_memory_files(memory_dir, facts)
+    # Prune MEMORY.md index to < 200 lines
+    prune_index(memory_dir / 'MEMORY.md')</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Trigger:</strong> roda a cada 24h se houver 5+ sessões novas — evita processamento desnecessário</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">extract_facts:</strong> usa LLM para extrair decisões, arquivos tocados, erros e aprendizados</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Pruning:</strong> mantém MEMORY.md abaixo de 200 linhas, removendo fatos obsoletos ou duplicados</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Separar memória em tipos temáticos (user, feedback, project, reference)</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Salvar sessões incrementalmente após cada interação</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Consolidar automaticamente com trigger baseado em volume</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Manter o índice MEMORY.md curto e objetivo (&lt;200 linhas)</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Jogar tudo num arquivo só sem categorização</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Ignorar limites de tamanho e deixar a memória crescer infinitamente</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Usar o modelo principal para tarefas de resumo/consolidação</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Consolidar a cada sessão — processar com muita frequência gasta tokens sem ganho</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Memória de sessão é uma lista de mensagens que cresce a cada interação do loop</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Persistência em JSON por sessão — simples, legível, sem dependências externas</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">4 tipos de memória (user, feedback, project, reference) + índice MEMORY.md</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Sliding window descarta mensagens antigas preservando as mais recentes</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Resumo com LLM comprime contexto antigo sem perder decisões importantes</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Consolidação automática (AutoDream) extrai fatos de sessões recentes e atualiza a memória</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-teal-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">5.4 - 🛡️ Segurança e Permissões</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-5-4.html" class="flex-1 text-center px-6 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

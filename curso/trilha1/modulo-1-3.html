@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 1.3 — Sob o Capô: O Ciclo de Vida de uma Conversa | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-emerald-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-emerald-400">Trilha 1</a>
+      <span>/</span>
+      <span class="text-emerald-400">Módulo 1.3</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MÓDULO 1.3</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">⚙️ Sob o Capô: O Ciclo de Vida de uma Conversa</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">O que realmente acontece entre você pressionar Enter e ver uma resposta. Cada conversa é gerenciada por um Motor de Consulta que roda em loop infinito, executando ferramentas em streaming e trocando de modelo automaticamente quando necessário.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">Básico</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">🔄 O Motor de Consulta — Uma instância por conversa</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">No coração do Claude Code está o Query Engine — o Motor de Consulta. Ele gerencia o ciclo de vida completo de cada conversa, desde o momento que você digita até a resposta final aparecer no terminal.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Query Engine</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Uma instância exclusiva por conversa — isolamento total</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Baseado em geradores assíncronos (async generators)</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Gerencia o estado da conversa: mensagens, contexto, ferramentas ativas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Responsável por chamar a API do Claude e processar as respostas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Controla o ciclo de vida: início, execução, compressão, finalização</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Por Que Uma Instância por Conversa?</h3>
+        <p class="text-neutral-300 leading-relaxed">Isolamento garante que conversas paralelas não interferem entre si. Cada instância mantém seu próprio estado, histórico e contexto — como processos separados em um sistema operacional.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">📝 As 6 Etapas — Do teclado até a resposta</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Quando você digita algo no Claude Code, sua mensagem passa por exatamente seis etapas antes de virar uma resposta. Este fluxo se repete em loop até o Claude decidir que terminou.</p>
+
+      <!-- Conversation Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_conversa_pt.png" alt="O fluxo de 6 etapas do teclado até a resposta" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">O fluxo de seis etapas: do teclado até a resposta.</div>
+      </div>
+
+      <!-- Timeline: 6 Steps -->
+      <div class="space-y-4 mb-6">
+        <div class="flex items-start space-x-4">
+          <span class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 font-bold text-sm">1</span>
+          <div class="pt-1">
+            <h4 class="font-bold text-neutral-100 mb-1">Você Digita</h4>
+            <p class="text-neutral-300 text-sm leading-relaxed">Sua mensagem entra no sistema como input do usuário</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <span class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 font-bold text-sm">2</span>
+          <div class="pt-1">
+            <h4 class="font-bold text-neutral-100 mb-1">Prompt do Sistema</h4>
+            <p class="text-neutral-300 text-sm leading-relaxed">O sistema injeta suas skills, plugins, contexto do projeto e memória</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <span class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 font-bold text-sm">3</span>
+          <div class="pt-1">
+            <h4 class="font-bold text-neutral-100 mb-1">API do Claude</h4>
+            <p class="text-neutral-300 text-sm leading-relaxed">A solicitação é transmitida em streaming para os servidores da Anthropic</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <span class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 font-bold text-sm">4</span>
+          <div class="pt-1">
+            <h4 class="font-bold text-neutral-100 mb-1">Chamadas de Ferramentas</h4>
+            <p class="text-neutral-300 text-sm leading-relaxed">Se o Claude precisar ler um arquivo ou executar um comando, ele chama uma ferramenta</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <span class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 font-bold text-sm">5</span>
+          <div class="pt-1">
+            <h4 class="font-bold text-neutral-100 mb-1">Resultados de Volta</h4>
+            <p class="text-neutral-300 text-sm leading-relaxed">Os resultados da ferramenta voltam para o Claude para outra passagem</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <span class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 font-bold text-sm">6</span>
+          <div class="pt-1">
+            <h4 class="font-bold text-neutral-100 mb-1">Resposta</h4>
+            <p class="text-neutral-300 text-sm leading-relaxed">A resposta final é transmitida em streaming para o seu terminal</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 O Loop no Coração</h3>
+        <p class="text-neutral-300 leading-relaxed">As etapas 3 a 5 se repetem em loop. O Claude pode ler um arquivo, depois executar um comando, depois ler outro arquivo, e só então responder. Esse loop é o coração do sistema — é o que faz dele um agente, não um chatbot.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">♾️ O Loop Infinito — while(true) no coração do sistema</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O segredo do Claude Code como agente está em três palavras: while(true). O loop de consulta roda indefinidamente, permitindo que o Claude execute quantas ações forem necessárias antes de responder.</p>
+
+      <!-- Query Loop Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_query_loop_pt.png" alt="O loop de consulta infinito" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">O loop de consulta infinito com execução de ferramentas em streaming.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">O Loop while(true)</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">O loop roda dentro de um <code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-emerald-400">while(true)</code> infinito</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Em cada iteração: envia para API → recebe resposta → verifica se há tool calls</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Se há tool calls: executa ferramentas → injeta resultados → volta para a API</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Se não há tool calls: resposta final é entregue ao usuário</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">O modelo pode fazer dezenas de iterações em uma única mensagem</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Confiar no loop — o Claude sabe quando parar</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Dar instruções claras para que o loop seja eficiente</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs text-emerald-400">/compact</code> se o loop ficar muito longo</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Interromper prematuramente com Ctrl+C (a menos que necessário)</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Dar instruções vagas que causam loops desnecessários</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Ignorar quando o contexto está ficando grande</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">🌊 Streaming Tool Executor — Paralelismo e acesso exclusivo</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">No centro do loop está o Streaming Tool Executor — o componente que decide como executar as ferramentas. Ele é inteligente o suficiente para rodar ferramentas seguras em paralelo e dar acesso exclusivo a ferramentas arriscadas.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Dois Modos de Execução</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <div>
+              <p class="text-neutral-300"><strong class="text-neutral-100">Paralelo (concurrency-safe):</strong> Ferramentas read-only como Read, Glob, Grep rodam simultaneamente. Ler 5 arquivos ao mesmo tempo é seguro e rápido.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <div>
+              <p class="text-neutral-300"><strong class="text-neutral-100">Exclusivo (não concurrency-safe):</strong> Ferramentas que modificam estado como Edit, Write, Bash rodam uma de cada vez. Editar dois arquivos em paralelo poderia causar conflitos.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">O método <code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-emerald-400">isConcurrencySafe()</code> de cada ferramenta define o comportamento</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Ferramentas <code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-emerald-400">isReadOnly()</code> são aprovadas automaticamente sem pedir permissão</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Impacto na Performance</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Leitura paralela de arquivos pode ser 5-10x mais rápida que sequencial</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">O cache de prompt é compartilhado entre execuções paralelas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Ferramentas seguras para concorrência não precisam de aprovação do usuário</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">O executor gerencia filas e prioridades automaticamente</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🔀 Fallback de Modelo — Troca automática sem você perceber</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O que acontece quando o modelo principal falha? O Claude Code tem um sistema de fallback que troca automaticamente para um modelo alternativo — e você nem percebe.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Resiliência Transparente</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Se a chamada de API para o modelo principal falhar, o sistema tenta um modelo de fallback</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">A troca é completamente transparente — o usuário não vê erro</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">O contexto da conversa é preservado durante a troca</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Feature flags controlam quais modelos estão disponíveis como fallback</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">O código menciona modelos como "capybara", "capybara-fast" e "capybara-fast[1m]"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Alerta -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-3">⚠️ O Modelo Capybara</h3>
+        <p class="text-neutral-300 leading-relaxed">O vazamento revelou referências ao codinome "Capybara" — possivelmente a próxima geração de modelos Claude (Claude 5?). Três variantes foram encontradas: capybara (padrão), capybara-fast (rápido) e capybara-fast[1m] (janela de 1M tokens). A Anthropic não confirmou.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">📡 Geradores Assíncronos — Streaming palavra por palavra</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Tudo no Claude Code é construído com async generators (geradores assíncronos). Isso significa que as respostas não chegam de uma vez — elas fluem em tempo real, ferramenta por ferramenta, palavra por palavra.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Fluxo Contínuo, Não Batch</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Respostas são transmitidas em tempo real via streaming</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Cada token (pedaço de texto) é renderizado no terminal imediatamente</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Resultados de ferramentas aparecem conforme são concluídos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">Não existe "esperar tudo terminar" — é um fluxo contínuo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">A experiência é como assistir o Claude "pensar em tempo real"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Na Prática</h3>
+        <p class="text-neutral-300 leading-relaxed">O streaming é o que torna o Claude Code responsivo mesmo em tarefas longas. Você vê progresso imediato — texto aparecendo, ferramentas sendo executadas, resultados surgindo. É fundamentalmente diferente de fazer uma requisição e esperar a resposta completa.</p>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Async Generators em TypeScript</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-blue-400">async function*</code> produz valores sob demanda</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-blue-400">yield</code> emite cada token/resultado conforme fica disponível</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-blue-400">for await...of</code> consome o stream no lado do cliente</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300">O padrão é usado em todo o sistema: API, ferramentas, agentes, ponte</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Query Engine: uma instância isolada por conversa</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">6 etapas: digita → sistema → API → ferramentas → resultados → resposta</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Loop while(true) é o que torna o Claude Code um agente, não um chatbot</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Ferramentas read-only rodam em paralelo, modificações são exclusivas</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Fallback automático de modelo garante resiliência</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Async generators permitem streaming em tempo real</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-emerald-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">1.4 - 🧰 A Caixa de Ferramentas: 40+ Ferramentas</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-1-4.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

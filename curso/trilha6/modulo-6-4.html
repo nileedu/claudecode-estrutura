@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 6.4 — Do Local ao Produção | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    /* Rose - trilha color */
+    html:not(.dark) .text-rose-400 { color: #e11d48; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    /* Blue - data boxes */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    /* Emerald / Red - fazer/evitar */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    /* Primary */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    /* Sky & Yellow */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    /* Nav overrides */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-rose-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-rose-400">Trilha 6</a>
+      <span>/</span>
+      <span class="text-rose-400">Módulo 6.4</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">MÓDULO 6.4</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🚀 Do Local ao Produção</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">LiteLLM proxy, multi-agente, benchmarks e o futuro dos agentes híbridos: levando seu agente local para o próximo nível.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">Avançado</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">Prática</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">🔀 LiteLLM Proxy</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O LiteLLM é um proxy que traduz APIs — ele faz seu modelo local parecer uma API do Claude para qualquer cliente. Isso significa que você pode usar o Claude Code CLI (com toda a sua UX refinada) apontando para um modelo Qwen3 rodando localmente. Zero custo de API, toda a experiência do Claude Code.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Configurando LiteLLM + Claude Code</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-neutral-500"># litellm_config.yaml</span>
+model_list:
+  - model_name: claude-sonnet-4-6
+    litellm_params:
+      model: ollama/qwen3-coder-next
+      api_base: http://localhost:11434</code></pre>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-neutral-500"># Terminal 1: iniciar o proxy</span>
+pip install litellm
+litellm --config litellm_config.yaml --port 44000
+
+<span class="text-neutral-500"># Terminal 2: usar Claude Code com modelo local</span>
+export ANTHROPIC_BASE_URL=http://localhost:44000
+export ANTHROPIC_AUTH_TOKEN=sk-local
+claude  <span class="text-neutral-500"># Agora usa Qwen3 local!</span></code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">model_name:</strong> deve bater com o modelo que o Claude Code espera (ex: claude-sonnet-4-6)</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">ollama/:</strong> prefixo que diz ao LiteLLM para usar o provider Ollama</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">ANTHROPIC_BASE_URL:</strong> redireciona todas as chamadas do Claude Code para o proxy local</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Toda a UX do Claude Code, Grátis</h3>
+        <p class="text-neutral-300 leading-relaxed">Com o LiteLLM proxy, você ganha: auto-complete, tool calling nativo, histórico de sessão, permissões por ferramenta e toda a interface do Claude Code — sem pagar um centavo de API. A qualidade das respostas depende do modelo local, mas a experiência de uso é idêntica.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">👥 Multi-Agente Local</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Por que rodar um agente quando você pode rodar três? Com multiprocessing, você spawna agentes especializados em paralelo — um pesquisa, outro codifica, outro testa. É o mesmo conceito do Army Mode do Claude Code, mas rodando 100% local sem custos de API.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_agentes_pt.png" alt="Diagrama de agentes em paralelo" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Múltiplos agentes trabalhando em paralelo — cada um com sua tarefa especializada.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Spawning Multi-Agente com Multiprocessing</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-rose-400">import</span> multiprocessing
+
+<span class="text-rose-400">def</span> worker_agent(task, model, result_queue):
+    result = agent_loop(task, model=model)
+    result_queue.put(result)
+
+<span class="text-neutral-500"># Spawnar 3 agentes em paralelo</span>
+queue = multiprocessing.Queue()
+workers = [
+    multiprocessing.Process(
+        target=worker_agent,
+        args=(task, <span class="text-emerald-400">'qwen3:8b'</span>, queue)
+    )
+    <span class="text-rose-400">for</span> task <span class="text-rose-400">in</span> [<span class="text-emerald-400">'research'</span>, <span class="text-emerald-400">'code'</span>, <span class="text-emerald-400">'test'</span>]
+]
+<span class="text-rose-400">for</span> w <span class="text-rose-400">in</span> workers: w.start()
+<span class="text-rose-400">for</span> w <span class="text-rose-400">in</span> workers: w.join()
+
+<span class="text-neutral-500"># Coletar resultados</span>
+results = []
+<span class="text-rose-400">while not</span> queue.empty():
+    results.append(queue.get())</code></pre>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">multiprocessing.Process:</strong> cada agente roda em processo separado — isolamento total</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Queue:</strong> comunicação entre processos — resultados vão para uma fila compartilhada</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">VRAM compartilhada:</strong> o Ollama gerencia a VRAM — múltiplos agentes com o mesmo modelo compartilham os pesos</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Army Mode Local</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Claude Code Army Mode:</strong> spawna até 5 sub-agentes para tarefas paralelas — usa API com custo por token</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Nossa versão local:</strong> mesmo conceito, custo zero — limitado apenas pela VRAM disponível</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Limitação:</strong> modelos menores (8B) produzem resultados menos confiáveis em tarefas complexas — use para tarefas bem definidas</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">📊 Benchmarks</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Números reais importam. Antes de escolher um modelo para seu agente, você precisa entender os trade-offs entre qualidade (SWE-bench), custo (VRAM + API), e latência. Aqui está a comparação direta entre os principais modelos para agentes de código.</p>
+
+      <!-- Box: Conceito Principal com Tabela -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Comparativo de Modelos para Agentes</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-rose-500/30">
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Modelo</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">SWE-bench</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">VRAM</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Custo</th>
+                <th class="text-left py-2 text-rose-400 font-semibold">Latência</th>
+              </tr>
+            </thead>
+            <tbody class="text-neutral-300">
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Claude Opus 4.6</td>
+                <td class="py-2 pr-4">72-77%</td>
+                <td class="py-2 pr-4">N/A (API)</td>
+                <td class="py-2 pr-4">$$$</td>
+                <td class="py-2">0.5-2s</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Qwen3-Coder-Next</td>
+                <td class="py-2 pr-4">69.6%</td>
+                <td class="py-2 pr-4">35-40GB</td>
+                <td class="py-2 pr-4">$0</td>
+                <td class="py-2">2-5s</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Qwen3-Coder:30b</td>
+                <td class="py-2 pr-4">~50%</td>
+                <td class="py-2 pr-4">20GB</td>
+                <td class="py-2 pr-4">$0</td>
+                <td class="py-2">1-3s</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Qwen3:32b</td>
+                <td class="py-2 pr-4">~45%</td>
+                <td class="py-2 pr-4">20GB</td>
+                <td class="py-2 pr-4">$0</td>
+                <td class="py-2">1-3s</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Qwen3:8b</td>
+                <td class="py-2 pr-4">~35%</td>
+                <td class="py-2 pr-4">5GB</td>
+                <td class="py-2 pr-4">$0</td>
+                <td class="py-2">0.5-1s</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium text-neutral-100">Qwen2.5-Coder:7b</td>
+                <td class="py-2 pr-4">~30%</td>
+                <td class="py-2 pr-4">4GB</td>
+                <td class="py-2 pr-4">$0</td>
+                <td class="py-2">0.5-1s</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 O Sweet Spot</h3>
+        <p class="text-neutral-300 leading-relaxed">O Qwen3-Coder-Next é o sweet spot para quem tem GPU com 40GB+ de VRAM: 69.6% no SWE-bench (próximo do Claude) a custo zero. Para GPUs menores (8-16GB), o Qwen3:8b é surpreendentemente capaz para tarefas simples de código como leitura, busca e edições pequenas.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">⚖️ Quando Usar Local vs API</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Não é "local OU API" — é "local E API, cada um no seu contexto". Entender quando usar cada abordagem é a diferença entre gastar $0 onde poderia e desperdiçar qualidade onde não deveria.</p>
+
+      <!-- Box: Conceito Principal com Tabela -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Guia de Decisão: Local vs API</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-rose-500/30">
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Use Case</th>
+                <th class="text-center py-2 pr-4 text-rose-400 font-semibold">Local</th>
+                <th class="text-center py-2 text-rose-400 font-semibold">API</th>
+              </tr>
+            </thead>
+            <tbody class="text-neutral-300">
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Desenvolvimento/teste</td>
+                <td class="py-2 pr-4 text-center text-emerald-400">✓</td>
+                <td class="py-2 text-center"></td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Dados sensíveis</td>
+                <td class="py-2 pr-4 text-center text-emerald-400">✓</td>
+                <td class="py-2 text-center"></td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Custo zero</td>
+                <td class="py-2 pr-4 text-center text-emerald-400">✓</td>
+                <td class="py-2 text-center"></td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Qualidade máxima</td>
+                <td class="py-2 pr-4 text-center"></td>
+                <td class="py-2 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Contexto > 128K</td>
+                <td class="py-2 pr-4 text-center"></td>
+                <td class="py-2 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Produção crítica</td>
+                <td class="py-2 pr-4 text-center"></td>
+                <td class="py-2 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium text-neutral-100">Experimentação</td>
+                <td class="py-2 pr-4 text-center text-emerald-400">✓</td>
+                <td class="py-2 text-center"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar local para desenvolvimento diário e testes rápidos</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Escalar para API quando a tarefa exige qualidade máxima</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Manter dados sensíveis sempre local — nunca enviar para API</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Implementar routing automático baseado em complexidade</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Usar API para tarefas simples que o local resolve bem</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Confiar em modelo 8B para refactoring complexo de produção</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Ignorar custos de API quando local resolve 90% dos casos</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Tratar local e API como mutuamente exclusivos</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🛠️ Frameworks Alternativos</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Nosso agente custom não é a única opção. Vários frameworks maduros suportam Ollama nativamente ou via adaptadores. A escolha depende do seu caso de uso: simplicidade, workflows complexos, multi-agente ou controle total.</p>
+
+      <!-- Box: Conceito Principal com Tabela -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Comparativo de Frameworks</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-rose-500/30">
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Framework</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Melhor Para</th>
+                <th class="text-left py-2 text-rose-400 font-semibold">Ollama?</th>
+              </tr>
+            </thead>
+            <tbody class="text-neutral-300">
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">smolagents</td>
+                <td class="py-2 pr-4">Agentes simples, code-first</td>
+                <td class="py-2">Nativo</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">LangGraph</td>
+                <td class="py-2 pr-4">Workflows complexos</td>
+                <td class="py-2">Via ChatOllama</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Qwen-Agent</td>
+                <td class="py-2 pr-4">Modelos Qwen específico</td>
+                <td class="py-2">Nativo</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">CrewAI</td>
+                <td class="py-2 pr-4">Times multi-agente</td>
+                <td class="py-2">Via LiteLLM</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium text-neutral-100">Custom (nosso!)</td>
+                <td class="py-2 pr-4">Controle total</td>
+                <td class="py-2">Direto</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 ~120 Linhas = Controle Total</h3>
+        <p class="text-neutral-300 leading-relaxed">Nosso agente custom é ~120 linhas de Python e dá controle total sobre cada aspecto: loop, ferramentas, memória, permissões e contexto. Frameworks adicionam conveniência mas também adicionam dependências, abstrações e pontos de falha. Para aprender, custom é imbatível. Para produção, avalie cada framework no seu caso de uso.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">🔮 O Futuro: Agentes Híbridos</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O futuro não é "local ou API" — é agentes híbridos que automaticamente escolhem o modelo certo para cada tarefa. Leitura de arquivo? Modelo local de 8B, instantâneo. Refactoring de 500 linhas? Escala para Claude via API. Routing inteligente baseado em complexidade.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Arquitetura do Agente Híbrido</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tarefas simples (local):</strong> leitura de arquivos, busca em código, navegação de diretórios, edições pequenas — resposta em milissegundos, custo zero</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tarefas complexas (API):</strong> refactoring pesado, debugging de bugs difíceis, geração de código complexo, decisões de arquitetura — qualidade máxima quando importa</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Routing inteligente:</strong> classificador que analisa a complexidade da tarefa e direciona para local ou API automaticamente</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Fallback automático:</strong> se o modelo local falha (output ruim, loop infinito), escala automaticamente para API</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 O Modelo Mental Correto</h3>
+        <p class="text-neutral-300 leading-relaxed">Pense em modelos como ferramentas no toolbox: você não usa uma marreta para pregar um prego. O modelo local de 8B é o martelo — rápido, barato, eficiente para o dia a dia. O Claude via API é a marreta — quando precisa de força bruta para problemas complexos. O agente híbrido escolhe a ferramenta certa automaticamente.</p>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Economia do Modelo Híbrido</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">90% das operações são simples:</strong> leitura, busca, navegação — modelo local resolve em milissegundos a custo zero</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">10% das operações são complexas:</strong> refactoring, debugging, decisões — API garante qualidade quando importa</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Resultado:</strong> redução de ~90% nos custos de API mantendo qualidade onde ela importa — o melhor dos dois mundos</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">LiteLLM proxy permite usar Claude Code CLI com modelos locais</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Multi-agente local com multiprocessing — Army Mode a custo zero</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Qwen3-Coder-Next alcança 69.6% no SWE-bench — próximo do Claude</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Local para dev/teste/dados sensíveis, API para qualidade máxima e produção</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Frameworks alternativos: smolagents, LangGraph, CrewAI — cada um com seu nicho</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Agentes híbridos: routing inteligente entre local e API para economia de 90%</span>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="../../index.html" class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors">Voltar ao Início →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- GRAND FINALE -->
+    <!-- ============================================================ -->
+    <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8 mt-12">
+      <h2 class="text-3xl font-bold mb-4">🎓 Parabéns! Curso Completo.</h2>
+      <p class="text-lg text-neutral-300 mb-8 leading-relaxed">Você completou todas as 6 trilhas do curso <strong class="text-neutral-100">"Por Dentro do Claude Code"</strong>. De arquitetura interna a agentes locais, você agora tem o conhecimento para entender, construir e otimizar agentes de IA.</p>
+
+      <div class="space-y-4 mb-8">
+        <div class="flex items-start space-x-3">
+          <span class="text-rose-400 font-bold mt-0.5 text-lg">✓</span>
+          <span class="text-neutral-300 text-lg">Entendeu a arquitetura completa do Claude Code (T1-T3)</span>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-rose-400 font-bold mt-0.5 text-lg">✓</span>
+          <span class="text-neutral-300 text-lg">Dominou os fundamentos de agentes de IA (T4)</span>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-rose-400 font-bold mt-0.5 text-lg">✓</span>
+          <span class="text-neutral-300 text-lg">Construiu um agente completo em Python (T5)</span>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-rose-400 font-bold mt-0.5 text-lg">✓</span>
+          <span class="text-neutral-300 text-lg">Integrou com Ollama + Qwen para rodar 100% local (T6)</span>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-rose-400 font-bold mt-0.5 text-lg">✓</span>
+          <span class="text-neutral-300 text-lg">Aprendeu padrões de engenharia validados em produção</span>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-rose-400 font-bold mt-0.5 text-lg">✓</span>
+          <span class="text-neutral-300 text-lg">Tem as ferramentas para construir seus próprios agentes</span>
+        </div>
+      </div>
+
+      <div class="bg-dark-800/50 rounded-lg p-6 mb-8 border border-dark-600">
+        <h3 class="font-semibold text-rose-400 mb-3 text-lg">Próximos Passos</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-neutral-400 mt-1">→</span>
+            <p class="text-neutral-300">Construa seu próprio agente com o código das Trilhas 5 e 6</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-neutral-400 mt-1">→</span>
+            <p class="text-neutral-300">Experimente diferentes modelos via Ollama — encontre o sweet spot para seu hardware</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-neutral-400 mt-1">→</span>
+            <p class="text-neutral-300">Contribua com a comunidade open-source de agentes de IA</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <a href="../../index.html" class="inline-block px-8 py-4 bg-rose-600 text-white rounded-xl font-bold text-lg hover:bg-rose-500 transition-colors">
+          🏠 Voltar ao Início do Curso
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

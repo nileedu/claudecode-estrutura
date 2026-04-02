@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trilha 6: Local - Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#F43F5E',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #9f1239; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Nucleo</span></a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Avancado</span></a>
+          <a href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"><span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span></a>
+          <a href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors"><span class="sm:hidden">T5</span><span class="hidden sm:inline">Pratica</span></a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10"><span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span></a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">TRILHA 6</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🏠 Agente Local com Qwen + Ollama</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Usando o Claude Code como referencia, construa um agente que roda 100% local com modelos Qwen via Ollama. Do setup ao agente completo, com benchmarks e alternativas.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">4</div>
+          <div class="text-xs text-neutral-400">Modulos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">24</div>
+          <div class="text-xs text-neutral-400">Topicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">~2h</div>
+          <div class="text-xs text-neutral-400">Duracao</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">Avancado</div>
+          <div class="text-xs text-neutral-400">Nivel</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- Navegacao Rapida -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-6">Navegacao Rapida</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="#modulo-6-1" class="group block bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-rose-500/30 transition-colors">
+          <span class="text-rose-400 font-bold">6.1</span>
+          <h3 class="text-lg font-semibold mt-2 group-hover:text-rose-400 transition-colors">🏠 Configurando o Ambiente Local</h3>
+          <p class="text-neutral-400 text-sm mt-1">Ollama, modelos Qwen, hardware e primeiro chat</p>
+        </a>
+        <a href="#modulo-6-2" class="group block bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-rose-500/30 transition-colors">
+          <span class="text-rose-400 font-bold">6.2</span>
+          <h3 class="text-lg font-semibold mt-2 group-hover:text-rose-400 transition-colors">🔗 Tool Calling com LLMs Locais</h3>
+          <p class="text-neutral-400 text-sm mt-1">Schemas, fluxo completo e thinking modes</p>
+        </a>
+        <a href="#modulo-6-3" class="group block bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-rose-500/30 transition-colors">
+          <span class="text-rose-400 font-bold">6.3</span>
+          <h3 class="text-lg font-semibold mt-2 group-hover:text-rose-400 transition-colors">🏗️ Montando o Agente Completo</h3>
+          <p class="text-neutral-400 text-sm mt-1">Agent loop, ferramentas, memoria e otimizacoes</p>
+        </a>
+        <a href="#modulo-6-4" class="group block bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-rose-500/30 transition-colors">
+          <span class="text-rose-400 font-bold">6.4</span>
+          <h3 class="text-lg font-semibold mt-2 group-hover:text-rose-400 transition-colors">🚀 Do Local ao Producao</h3>
+          <p class="text-neutral-400 text-sm mt-1">LiteLLM, benchmarks, frameworks e futuro</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="flex items-center mb-12">
+      <div class="flex-1 border-t border-dark-600"></div>
+      <span class="px-4 text-neutral-500 text-sm font-semibold">Conteudo Detalhado</span>
+      <div class="flex-1 border-t border-dark-600"></div>
+    </div>
+
+    <!-- Modulo 6.1 -->
+    <div id="modulo-6-1" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-rose-400 font-bold">6.1</span>
+          <span class="text-xs text-neutral-500">~30 min</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">🏠 Configurando o Ambiente Local</h3>
+        <p class="text-neutral-400 text-sm">Instalando Ollama, escolhendo modelos Qwen por hardware, configurando context window e primeiro chat funcional.</p>
+      </div>
+      <div class="divide-y divide-dark-600">
+        <!-- Topic 1 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg">📥</span>
+            <div>
+              <span class="font-medium">Instalando Ollama</span>
+              <span class="text-neutral-500 text-sm ml-2">- curl, brew ou Docker</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Ollama roda LLMs localmente via REST API em localhost:11434. Instalacao: curl -fsSL https://ollama.com/install.sh | sh.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Sem custo de API, privacidade total, sem limites.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Ollama, localhost:11434, REST API, model pull.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 2 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg">🤖</span>
+            <div>
+              <span class="font-medium">Modelos Qwen</span>
+              <span class="text-neutral-500 text-sm ml-2">- Qwen3, Qwen3-Coder, Qwen3.5 disponiveis</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Familia Qwen3 (0.6B-235B), Qwen3-Coder (30B-480B MoE), Qwen3.5 (0.8B-397B, 256K context).</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Qwen3-Coder-Next atinge 69.6% no SWE-bench — proximo de Claude.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Qwen3, MoE, dense vs sparse, SWE-bench.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 3 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg">💾</span>
+            <div>
+              <span class="font-medium">Escolhendo por Hardware</span>
+              <span class="text-neutral-500 text-sm ml-2">- 8GB/16GB/24GB/40GB+ VRAM</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">8GB → qwen3:8b; 16GB → qwen3-coder:30b-a3b (MoE); 24GB → qwen3:32b; 40GB+ → qwen3-coder-next.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Modelo errado para seu hardware = lento ou impossivel.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">VRAM, quantizacao Q4/Q6/Q8, MoE efficiency.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 4 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg">📏</span>
+            <div>
+              <span class="font-medium">Context Window</span>
+              <span class="text-neutral-500 text-sm ml-2">- O parametro mais importante (num_ctx)</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Ollama default e 4096 tokens — muito pouco! Configurar num_ctx=65536 ou OLLAMA_CONTEXT_LENGTH.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Agentes precisam de contexto grande para historico + tools + resultados.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">num_ctx, context length, KV cache, kv_cache_type q4_0.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 5 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg">🐍</span>
+            <div>
+              <span class="font-medium">Python + ollama</span>
+              <span class="text-neutral-500 text-sm ml-2">- pip install ollama e primeiro chat</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">pip install ollama; from ollama import chat; response = chat(model='qwen3:8b', messages=[...]).</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Biblioteca oficial com API limpa e suporte a streaming.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">pip install, chat(), AsyncClient, stream=True.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 6 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg">💬</span>
+            <div>
+              <span class="font-medium">Primeiro Chat com Qwen</span>
+              <span class="text-neutral-500 text-sm ml-2">- Hello World do agente local</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Primeiro chat funcional: enviar mensagem, receber resposta, verificar que tudo funciona.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Validar o setup antes de construir o agente.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Hello world, smoke test, options={'num_ctx': 65536}.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button onclick="openModal('modal-6-1')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+        <a href="modulo-6-1.html" class="px-4 py-2 text-sm bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors">Ver Completo</a>
+      </div>
+    </div>
+
+    <!-- Modulo 6.2 -->
+    <div id="modulo-6-2" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-rose-400 font-bold">6.2</span>
+          <span class="text-xs text-neutral-500">~30 min</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">🔗 Tool Calling com LLMs Locais</h3>
+        <p class="text-neutral-400 text-sm">Como funciona tool calling com Ollama, formato dos schemas, fluxo completo, thinking modes e diferencas entre local e API.</p>
+      </div>
+      <div class="divide-y divide-dark-600">
+        <!-- Topic 1 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg">🔧</span>
+            <div>
+              <span class="font-medium">Como Funciona</span>
+              <span class="text-neutral-500 text-sm ml-2">- O endpoint /api/chat aceita array tools</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Ollama /api/chat aceita tools array no mesmo formato da OpenAI. O modelo gera tool_calls no response.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Tool calling e o que transforma chat em agente.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">/api/chat, tools parameter, tool_calls response.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 2 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg">📋</span>
+            <div>
+              <span class="font-medium">Formato dos Schemas</span>
+              <span class="text-neutral-500 text-sm ml-2">- JSON Schema OpenAI-compatible</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">{type: "function", function: {name, description, parameters: {type: "object", properties, required}}}.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Formato padrao permite trocar de modelo sem mudar codigo.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">JSON Schema, OpenAI format, function definition.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 3 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg">🔄</span>
+            <div>
+              <span class="font-medium">O Fluxo Completo</span>
+              <span class="text-neutral-500 text-sm ml-2">- request → tool_calls → execute → tool result</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Envia messages+tools → modelo retorna tool_calls → executa → adiciona resultado como role:tool → repete.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">E o mesmo loop da Trilha 4, agora implementado de verdade.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Tool dispatch loop, role:tool, message history.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 4 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg">🧠</span>
+            <div>
+              <span class="font-medium">Thinking vs Non-Thinking</span>
+              <span class="text-neutral-500 text-sm ml-2">- Qwen3 tem dois modos</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Qwen3 pode pensar (&lt;think&gt;...&lt;/think&gt;) ou responder direto. Non-thinking para tools rapidos; thinking para planejamento.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Thinking gasta tokens extras; usar seletivamente.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Thinking mode, &lt;think&gt; tags, enable_thinking, strip from history.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 5 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg">🌊</span>
+            <div>
+              <span class="font-medium">Streaming com Ferramentas</span>
+              <span class="text-neutral-500 text-sm ml-2">- Limitacoes e workarounds</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Com stream=True + tools, tool calls nao sao incrementais — modelo completa JSON antes. Usar stream=False para tool turns.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Limitacao pratica que afeta o design do loop.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Stream + tools limitation, hybrid approach.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 6 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg">⚖️</span>
+            <div>
+              <span class="font-medium">Local vs API</span>
+              <span class="text-neutral-500 text-sm ml-2">- O que funciona diferente</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Local: sem custo, mais lento, contexto menor, tool calling menos confiavel. API: mais rapido, mais caro, melhor tool calling.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Entender trade-offs para escolher quando usar cada um.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Latency, cost, reliability, context size.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button onclick="openModal('modal-6-2')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+        <a href="modulo-6-2.html" class="px-4 py-2 text-sm bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors">Ver Completo</a>
+      </div>
+    </div>
+
+    <!-- Modulo 6.3 -->
+    <div id="modulo-6-3" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-rose-400 font-bold">6.3</span>
+          <span class="text-xs text-neutral-500">~30 min</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">🏗️ Montando o Agente Completo</h3>
+        <p class="text-neutral-400 text-sm">O agent loop completo, integracao de ferramentas da T5, memoria com persistencia, compressao para janelas menores e otimizacoes.</p>
+      </div>
+      <div class="divide-y divide-dark-600">
+        <!-- Topic 1 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg">🔄</span>
+            <div>
+              <span class="font-medium">O Agent Loop (~30 linhas)</span>
+              <span class="text-neutral-500 text-sm ml-2">- O loop completo com Ollama</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">O loop completo em ~30 linhas: messages → chat(model, messages, tools) → tool_calls? → execute → append → repeat.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">O agente inteiro em codigo que cabe numa tela.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">agent_loop(), max_iterations, chat() call.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 2 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg">🧰</span>
+            <div>
+              <span class="font-medium">Integrando Ferramentas</span>
+              <span class="text-neutral-500 text-sm ml-2">- Conectando o ToolRegistry da T5</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Importar TOOL_MAP e TOOL_SCHEMAS da T5, integrar no agent loop com dispatch automatico.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Reuso dos componentes ja construidos.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Tool integration, dispatch, TOOL_MAP[name](**args).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 3 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg">💾</span>
+            <div>
+              <span class="font-medium">Memoria com Persistencia</span>
+              <span class="text-neutral-500 text-sm ml-2">- AgentMemory integrado</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">AgentMemory.save() apos cada turno, load() para retomar sessao.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Persistencia entre sessoes sem perder contexto.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Session persistence, save/load, session_id.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 4 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg">📦</span>
+            <div>
+              <span class="font-medium">Contexto para Janelas Menores</span>
+              <span class="text-neutral-500 text-sm ml-2">- Compressao agressiva</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Modelos locais tem 8K-32K vs 200K da API. Compressao agressiva: trim a cada turno, truncar outputs longos (10K chars max).</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Sem compressao, agente local quebra em 3-4 iteracoes.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Aggressive trimming, output truncation, token budget.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 5 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg">🧹</span>
+            <div>
+              <span class="font-medium">Strip de &lt;think&gt; Blocks</span>
+              <span class="text-neutral-500 text-sm ml-2">- Limpando output do Qwen3</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Qwen3 thinking mode emite &lt;think&gt;...&lt;/think&gt;. Remover antes de salvar no historico com regex.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Thinking tokens consomem contexto sem valor para o historico.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">re.sub(r'&lt;think&gt;.*?&lt;/think&gt;', '', content, flags=re.DOTALL).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 6 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg">⚡</span>
+            <div>
+              <span class="font-medium">Otimizacoes</span>
+              <span class="text-neutral-500 text-sm ml-2">- keep_alive, temperature, top_p</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">keep_alive='10m' (nao descarrega modelo), temperature=0.6, top_p=0.95, top_k=20 (recomendado Qwen3).</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Otimizacoes fazem diferenca real em velocidade e qualidade.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">keep_alive, temperature, sampling parameters.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button onclick="openModal('modal-6-3')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+        <a href="modulo-6-3.html" class="px-4 py-2 text-sm bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors">Ver Completo</a>
+      </div>
+    </div>
+
+    <!-- Modulo 6.4 -->
+    <div id="modulo-6-4" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-rose-400 font-bold">6.4</span>
+          <span class="text-xs text-neutral-500">~30 min</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">🚀 Do Local ao Producao</h3>
+        <p class="text-neutral-400 text-sm">LiteLLM proxy, multi-agente local, benchmarks reais, decisao local vs API, frameworks alternativos e o futuro hibrido.</p>
+      </div>
+      <div class="divide-y divide-dark-600">
+        <!-- Topic 1 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg">🔀</span>
+            <div>
+              <span class="font-medium">LiteLLM Proxy</span>
+              <span class="text-neutral-500 text-sm ml-2">- Usando Claude Code CLI com modelos locais</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">LiteLLM como proxy OpenAI-compatible que roteia para Ollama. Permite usar claude CLI com modelos locais.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Aproveitar a UX do Claude Code com modelos gratuitos.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">LiteLLM, proxy, ANTHROPIC_BASE_URL, config.yaml.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 2 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg">👥</span>
+            <div>
+              <span class="font-medium">Multi-Agente Local</span>
+              <span class="text-neutral-500 text-sm ml-2">- Processos paralelos com fork</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Spawnar multiplos processos agente com subprocess ou multiprocessing. Cada um com seu proprio contexto.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Paralelismo para tarefas complexas, como o Army Mode do Claude Code.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">multiprocessing, subprocess, fork, coordenacao.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 3 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg">📊</span>
+            <div>
+              <span class="font-medium">Benchmarks</span>
+              <span class="text-neutral-500 text-sm ml-2">- Qwen3-Coder-Next vs Claude (SWE-bench)</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Qwen3-Coder-Next: 69.6% SWE-bench. Claude Opus: 72-77%. Qwen3:8b: ~35%. Custo: local $0, API $$$.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Dados concretos para decidir qual modelo usar.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">SWE-bench, BFCL, latencia, custo/beneficio.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 4 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg">⚖️</span>
+            <div>
+              <span class="font-medium">Quando Usar Local vs API</span>
+              <span class="text-neutral-500 text-sm ml-2">- Decisao pratica</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Local para: privacidade, custo zero, desenvolvimento, experimentacao. API para: qualidade maxima, contexto grande, producao critica.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Nao e binario — o ideal e hibrido.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Trade-offs, use cases, hybrid approach.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 5 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg">🛠️</span>
+            <div>
+              <span class="font-medium">Frameworks Alternativos</span>
+              <span class="text-neutral-500 text-sm ml-2">- smolagents, LangGraph, Qwen-Agent</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">smolagents (code-first, Ollama nativo), LangGraph (grafos complexos), Qwen-Agent (otimizado para Qwen).</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Nao precisa construir tudo do zero se um framework serve.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">smolagents, LangGraph, Qwen-Agent, CrewAI.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Topic 6 -->
+        <div class="topic-item">
+          <button onclick="toggleTopic(this)" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg">🔮</span>
+            <div>
+              <span class="font-medium">O Futuro</span>
+              <span class="text-neutral-500 text-sm ml-2">- Agentes hibridos local+cloud</span>
+            </div>
+          </button>
+          <div class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-rose-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Agentes que usam modelo local para tarefas simples e API para tarefas complexas. Routing inteligente.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Combinar o melhor dos dois mundos.</p>
+              </div>
+              <div>
+                <span class="text-rose-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Hybrid agents, model routing, cost optimization, fallback.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button onclick="openModal('modal-6-4')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+        <a href="modulo-6-4.html" class="px-4 py-2 text-sm bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors">Ver Completo</a>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="flex justify-between items-center mt-12">
+      <a href="../trilha5/index.html" class="px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Trilha Anterior</a>
+      <a href="../../index.html" class="px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors">Voltar ao Inicio →</a>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Modal 6.1 -->
+  <div id="modal-6-1" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-rose-400 font-bold">6.1</span>
+          <span class="font-semibold">🏠 Configurando o Ambiente Local</span>
+        </div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-6-1.html" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- Modal 6.2 -->
+  <div id="modal-6-2" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-rose-400 font-bold">6.2</span>
+          <span class="font-semibold">🔗 Tool Calling com LLMs Locais</span>
+        </div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-6-2.html" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- Modal 6.3 -->
+  <div id="modal-6-3" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-rose-400 font-bold">6.3</span>
+          <span class="font-semibold">🏗️ Montando o Agente Completo</span>
+        </div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-6-3.html" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- Modal 6.4 -->
+  <div id="modal-6-4" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-rose-400 font-bold">6.4</span>
+          <span class="font-semibold">🚀 Do Local ao Producao</span>
+        </div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-6-4.html" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

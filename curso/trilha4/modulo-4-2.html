@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 4.2 — O Loop do Agente | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    /* Amber - trilha color */
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217, 119, 6, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217, 119, 6, 0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217, 119, 6, 0.18); }
+    /* Blue - data boxes */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    /* Emerald / Red - fazer/evitar */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    /* Primary */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    /* Sky & Yellow */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    /* Nav overrides */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-amber-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-amber-400">Trilha 4</a>
+      <span>/</span>
+      <span class="text-amber-400">Módulo 4.2</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">MÓDULO 4.2</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🔄 O Loop do Agente</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">O ciclo que transforma um chatbot em agente. Das 6 etapas ao pseudocódigo — entenda o coração de todo sistema agentic.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-amber-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-amber-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-amber-400">Básico</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-amber-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">📝 As Etapas do Loop</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O loop do agente tem 6 etapas bem definidas — as mesmas que o Claude Code executa em cada iteração. Entender cada etapa é entender como qualquer agente funciona, porque todos seguem esse mesmo padrão fundamental.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_conversa_pt.png" alt="Diagrama do fluxo de conversa do agente" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">O fluxo completo de uma conversa no Claude Code — cada mensagem passa pelas 6 etapas do loop.</div>
+      </div>
+
+      <!-- Timeline: 6 Steps -->
+      <div class="space-y-4 mb-6">
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">1</div>
+          <div>
+            <p class="text-neutral-100 font-semibold">Receber Input</p>
+            <p class="text-neutral-400 text-sm">Mensagem do usuário ou resultado de ferramenta entra na fila de mensagens</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">2</div>
+          <div>
+            <p class="text-neutral-100 font-semibold">Montar Contexto</p>
+            <p class="text-neutral-400 text-sm">System prompt + memória + histórico de conversa + definições de ferramentas</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">3</div>
+          <div>
+            <p class="text-neutral-100 font-semibold">Chamar o LLM</p>
+            <p class="text-neutral-400 text-sm">Enviar tudo para a API e receber a resposta (texto + possíveis tool_calls)</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">4</div>
+          <div>
+            <p class="text-neutral-100 font-semibold">Verificar Tool Calls</p>
+            <p class="text-neutral-400 text-sm">Se não há tool_calls, o loop termina. Se há, continua para execução</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">5</div>
+          <div>
+            <p class="text-neutral-100 font-semibold">Executar Ferramentas</p>
+            <p class="text-neutral-400 text-sm">Rodar cada ferramenta solicitada (possivelmente em paralelo) e coletar resultados</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">6</div>
+          <div>
+            <p class="text-neutral-100 font-semibold">Adicionar Resultados</p>
+            <p class="text-neutral-400 text-sm">Resultados das ferramentas entram como novas mensagens — volta para etapa 1</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">Por Que Essas 6 Etapas?</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Separação de responsabilidades:</strong> cada etapa faz uma coisa só, facilitando debug e extensão</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Composabilidade:</strong> você pode trocar o LLM, adicionar ferramentas ou mudar o contexto sem alterar o loop</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Padrão universal:</strong> OpenAI, Anthropic, Google — todos usam o mesmo padrão de tool_calls no loop</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">♾️ Por Que o Loop é Infinito</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">while(true)</code> não é um bug — é uma feature. O loop precisa ser infinito porque o agente não sabe de antemão quantas iterações vai precisar. Uma tarefa pode levar 1 iteração (pergunta simples) ou 50 (refatoração complexa). O número é determinado pelo LLM em tempo de execução.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_query_loop_pt.png" alt="Diagrama do query loop do Claude Code" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">O query loop do Claude Code — um while(true) que só para quando não há mais tool_calls.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">O Poder do Loop Infinito</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Número variável de passos:</strong> o mesmo agente resolve tarefas de 1 passo e tarefas de 50 passos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">LLM como controlador:</strong> é o modelo que decide quando parar, não o código</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Adaptação dinâmica:</strong> se uma ferramenta falha, o LLM pode tentar outra abordagem no próximo ciclo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Emergência:</strong> comportamentos complexos emergem de iterações simples repetidas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Loop Infinito com Segurança</h3>
+        <p class="text-neutral-300 leading-relaxed">Todo loop infinito precisa de um safety net. O Claude Code usa max_iterations e timeout para evitar que o agente rode para sempre. Quando implementar seu próprio loop, sempre defina um limite máximo de iterações (comece com 25-50) e um timeout global. Melhor parar cedo do que gastar tokens infinitamente.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">🛑 Quando o Agente Para</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O loop infinito tem três condições de parada. Entender quando e por que o agente para é tão importante quanto entender como ele roda. Um agente que não para é tão inútil quanto um agente que para cedo demais.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">As 3 Condições de Parada</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Sem tool_calls:</strong> o LLM respondeu sem solicitar nenhuma ferramenta — tarefa completa</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Max iterations:</strong> atingiu o limite de segurança — o agente não conseguiu terminar no tempo previsto</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Erro irrecuperável:</strong> API fora do ar, timeout, ou erro que o fallback não consegue resolver</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Como o Claude Code Lida com Cada Parada</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Parada normal:</strong> response.stop_reason === "end_turn" — o modelo decidiu que terminou</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Parada por limite:</strong> contador de iterações atinge o máximo — log de warning + resposta parcial</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Parada por erro:</strong> retry com backoff exponencial → fallback de modelo → abort com mensagem de erro</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Context window cheia:</strong> AutoDream resume a conversa e o loop continua com contexto comprimido</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">🌊 Streaming vs Batch</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Existem duas formas de processar a resposta do LLM dentro do loop: streaming (tokens chegam um a um em tempo real) e batch (espera a resposta inteira antes de processar). O Claude Code usa streaming com async generators, permitindo que o usuário veja progresso imediato enquanto o agente trabalha.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">Streaming vs Batch no Loop</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Streaming:</strong> tokens chegam progressivamente — UX melhor, o usuário vê o agente "pensando"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Batch:</strong> espera a resposta completa — mais simples de implementar, mas UX de "tela preta"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Async generators:</strong> o Claude Code usa <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">yield</code> para emitir eventos conforme chegam</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tool calls parciais:</strong> mesmo durante streaming, o agente detecta tool_calls incrementalmente</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar streaming para qualquer interface interativa (CLI, web)</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Mostrar indicador de progresso enquanto ferramentas executam</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Processar tool_calls assim que detectados no stream</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar batch apenas para scripts automatizados sem interação</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Esperar resposta completa antes de começar a processar</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Ignorar erros de stream parciais (tratar como fatais)</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Acumular todo o stream em memória antes de processar</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Misturar lógica de streaming com lógica de negócio no mesmo handler</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">⚠️ Tratamento de Erros</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Erros são inevitáveis em agentes. Ferramentas falham, APIs caem, arquivos não existem. A genialidade do loop é que erros de ferramentas não são fatais — eles voltam para o LLM como contexto, e o modelo tenta outra abordagem. O agente se auto-corrige.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">Erros Como Contexto</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Erro da ferramenta:</strong> resultado com <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">is_error: true</code> volta como mensagem normal para o LLM</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">LLM adapta:</strong> ao ver o erro, o modelo muda de estratégia — tenta outro arquivo, outro comando, outra abordagem</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Fallback de modelo:</strong> se o modelo principal falha (rate limit, timeout), o sistema tenta automaticamente um modelo alternativo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Retry com backoff:</strong> erros transitórios (rede, rate limit) são retentados com espera exponencial</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Alerta (Erros Comuns) -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-4">🚨 Erros Comuns em Loops de Agente</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-red-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Loop infinito de erros:</strong> ferramenta falha → LLM tenta a mesma coisa → falha de novo. Solução: detectar repetição e forçar mudança de estratégia</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-red-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Context window envenenada:</strong> muitos erros acumulados enchem o contexto de lixo. Solução: limpar mensagens de erro antigas após N iterações</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-red-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Silenciar erros:</strong> ignorar erros de ferramentas faz o LLM "inventar" resultados. Solução: sempre retornar o erro real como contexto</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-red-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Sem fallback:</strong> depender de um único modelo é ponto de falha. Solução: ter pelo menos um modelo alternativo configurado</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">📋 Seu Primeiro Loop em Pseudocódigo</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Agora que você entende as etapas, as condições de parada, streaming e erros — aqui está o pseudocódigo completo de um loop de agente. Este é o esqueleto que todo agente segue, do Claude Code ao AutoGPT.</p>
+
+      <!-- Box: Conceito Principal com Código -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">Pseudocódigo do Loop do Agente</h3>
+        <div class="bg-dark-900 rounded-lg p-4 mb-4 overflow-x-auto">
+          <pre class="text-sm text-neutral-300 leading-relaxed"><code><span class="text-amber-400">// 1. Inicializar</span>
+messages = [system_prompt]
+tools = load_tools()
+max_iterations = 50
+
+<span class="text-amber-400">// 2. Loop principal</span>
+<span class="text-emerald-400">while</span> True:
+    <span class="text-amber-400">// 3. Chamar o LLM</span>
+    response = llm.create(
+        messages = messages,
+        tools = tools
+    )
+
+    <span class="text-amber-400">// 4. Adicionar resposta ao histórico</span>
+    messages.append(response.message)
+
+    <span class="text-amber-400">// 5. Verificar se há tool_calls</span>
+    <span class="text-emerald-400">if</span> <span class="text-red-400">not</span> response.tool_calls:
+        <span class="text-emerald-400">return</span> response.text  <span class="text-neutral-500">// Pronto!</span>
+
+    <span class="text-amber-400">// 6. Executar cada ferramenta</span>
+    <span class="text-emerald-400">for</span> tool_call <span class="text-emerald-400">in</span> response.tool_calls:
+        result = execute_tool(
+            name = tool_call.name,
+            args = tool_call.arguments
+        )
+        <span class="text-amber-400">// 7. Resultado volta como mensagem</span>
+        messages.append({
+            role: <span class="text-primary">"tool"</span>,
+            tool_call_id: tool_call.id,
+            content: result
+        })
+
+    <span class="text-amber-400">// 8. Safety net</span>
+    max_iterations -= 1
+    <span class="text-emerald-400">if</span> max_iterations <= 0:
+        <span class="text-emerald-400">return</span> <span class="text-primary">"Limite de iterações atingido"</span></code></pre>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">~20 linhas:</strong> o loop inteiro cabe em 20 linhas de pseudocódigo. A simplicidade é proposital</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Sem mágica:</strong> é um while loop com if/for. O poder vem da combinação LLM + tools, não do código</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Extensível:</strong> adicione streaming, parallelismo, retry — o esqueleto permanece o mesmo</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Na Próxima Trilha: Implementação Real</h3>
+        <p class="text-neutral-300 leading-relaxed">Este pseudocódigo é o mapa. Na Trilha 5 (Prática), você vai implementar esse loop de verdade — com Python + Anthropic SDK, ferramentas reais, streaming e tratamento de erros. Por agora, o objetivo é entender a lógica. Quando for implementar, vai perceber que o código real é surpreendentemente parecido com o pseudocódigo.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O loop tem 6 etapas claras: input → contexto → LLM → verificar → executar → adicionar resultados</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O while(true) é intencional — permite número variável de iterações controlado pelo LLM</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Três condições de parada: sem tool_calls, max_iterations, erro irrecuperável</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Streaming com async generators dá feedback em tempo real ao usuário</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Erros de ferramentas não são fatais — voltam como contexto e o LLM se adapta</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O loop inteiro cabe em ~20 linhas de pseudocódigo — a complexidade está no LLM, não no código</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-amber-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">4.3 - Ferramentas e Tool Use</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-4-3.html" class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

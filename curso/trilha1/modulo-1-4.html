@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 1.4 — A Caixa de Ferramentas: 40+ Ferramentas | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-emerald-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-emerald-400">Trilha 1</a>
+      <span>/</span>
+      <span class="text-emerald-400">Módulo 1.4</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MÓDULO 1.4</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧰 A Caixa de Ferramentas: 40+ Ferramentas</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Toda ferramenta no Claude Code segue o mesmo padrão universal. Entender uma significa entender todas — e essa é uma das decisões de design mais limpas de toda a base de código.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">Intermediário</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">📋 O Padrão Universal — ~30 métodos por ferramenta</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O Claude Code tem mais de 40 ferramentas, e cada uma delas segue o mesmo modelo universal. Uma ferramenta é um objeto com cerca de 30 métodos que definem o que ela faz, como validar entradas, quem pode executá-la e o que acontece se você interrompê-la.</p>
+
+      <!-- Tools Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_ferramentas_pt.png" alt="O modelo universal de ferramentas" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">O modelo universal de ferramentas e as 12 ferramentas mais importantes.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Um Padrão Para Todas</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Cada ferramenta é um objeto TypeScript com ~30 métodos padronizados</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">O padrão garante consistência: toda ferramenta se comporta de forma previsível</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Novas ferramentas são criadas seguindo o mesmo template</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">O sistema de execução não precisa conhecer detalhes internos — só a interface</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">É um exemplo de design por contrato (Design by Contract) em produção</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 As 12 Ferramentas Mais Usadas</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Read</strong> — Lê arquivos do sistema</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Edit</strong> — Edita arquivos com substituição de strings</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Write</strong> — Cria/sobrescreve arquivos</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Bash</strong> — Executa comandos shell</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Glob</strong> — Busca arquivos por padrão (*.ts, **/*.json)</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Grep</strong> — Busca conteúdo dentro de arquivos</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Agent</strong> — Cria subagentes para tarefas paralelas</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">WebFetch</strong> — Busca conteúdo da web</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">WebSearch</strong> — Pesquisa na internet</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">NotebookEdit</strong> — Edita Jupyter notebooks</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">TodoRead/TodoWrite</strong> — Gerencia lista de tarefas</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">ToolSearch</strong> — Busca ferramentas sob demanda</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">⚙️ Anatomia de uma Ferramenta — call(), inputSchema, checkPermissions</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Vamos abrir uma ferramenta e ver suas entranhas. Cada método tem um propósito claro e bem definido.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Os Métodos Essenciais</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100"><code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">call()</code></strong> — Executa a ação principal (ler arquivo, rodar comando, etc.)</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100"><code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">inputSchema</code></strong> — Define e valida as entradas usando Zod (biblioteca de validação TypeScript)</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100"><code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">checkPermissions()</code></strong> — Decide: permitir automaticamente, negar ou perguntar ao usuário</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100"><code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">isConcurrencySafe()</code></strong> — Esta ferramenta pode rodar em paralelo com outras?</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100"><code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">isReadOnly()</code></strong> — Se true, é seguro aprovar automaticamente</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100"><code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">interruptBehavior</code></strong> — O que acontece se você pressionar Ctrl+C no meio da execução</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100"><code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">shouldDefer</code></strong> — Carrega sob demanda via ToolSearch para manter a lista enxuta</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Zod para Validação</h3>
+        <p class="text-neutral-300 leading-relaxed">Toda entrada é validada com Zod antes da execução. Se você passar um parâmetro inválido, a ferramenta rejeita antes mesmo de tentar executar. Isso previne erros cascata e protege o sistema de inputs malformados.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">🔐 Sistema de Permissões — allow, deny, ask</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Cada ferramenta tem um sistema de permissões de três níveis que equilibra autonomia com segurança. Você pode configurar para que ações seguras sejam automáticas e ações perigosas peçam confirmação.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Os Três Níveis</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Allow (Permitir):</strong> A ferramenta executa automaticamente sem perguntar. Exemplo: ler arquivos</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Deny (Negar):</strong> A ferramenta é bloqueada. Exemplo: comandos destrutivos em produção</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Ask (Perguntar):</strong> O sistema pede sua confirmação antes de executar. Exemplo: editar um arquivo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Configurando Permissões Automáticas</h3>
+        <p class="text-neutral-300 leading-relaxed mb-4">O problema mais comum é o sistema pedir confirmação o tempo todo. A solução: configurar wildcards no settings.json:</p>
+        <div class="space-y-2">
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <span class="text-neutral-300">Permitir todos os comandos git</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <span class="text-neutral-300">Permitir edições em determinada pasta</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <span class="text-neutral-300">Permitir leituras em todo o projeto</span>
+          </div>
+        </div>
+        <p class="text-neutral-300 leading-relaxed mt-4">Resultado: menos interrupção e mais automação.</p>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4">✅ Fazer</h3>
+          <div class="space-y-3">
+            <div class="flex items-start space-x-3">
+              <span class="text-emerald-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Configurar permissões automáticas para ações seguras e repetitivas</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-emerald-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Manter ask para ações destrutivas</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-emerald-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Revisar settings.json periodicamente</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4">❌ Evitar</h3>
+          <div class="space-y-3">
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Aprovar tudo automaticamente sem pensar</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Negar tudo e ser interrompido a cada ação</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Ignorar o sistema de permissões</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">🔀 Concorrência e Paralelismo — isConcurrencySafe e execução paralela</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O Claude Code pode executar múltiplas ferramentas simultaneamente — mas só quando é seguro. O método isConcurrencySafe() é o guardião que decide o que pode rodar em paralelo.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Paralelo vs Exclusivo</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Ferramentas concurrency-safe:</strong> Read, Glob, Grep, WebFetch — podem rodar em paralelo</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Ferramentas exclusivas:</strong> Edit, Write, Bash — rodam uma de cada vez</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">A decisão é por ferramenta, não global</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Ferramentas read-only são automaticamente concurrency-safe</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">O executor gerencia filas e prioridades transparentemente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Impacto Real</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Buscar 10 arquivos em paralelo vs sequencial: até 10x mais rápido</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">O paralelismo é transparente — o modelo simplesmente chama várias ferramentas e o executor decide</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Cache de prompt é compartilhado entre execuções paralelas, reduzindo custo</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Na prática, o Claude Code frequentemente lê múltiplos arquivos de uma vez ao explorar código</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🛡️ BashTool — A mais protegida: 23+ verificações</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A BashTool é a ferramenta mais poderosa e mais protegida do Claude Code. Ela executa comandos shell — e por isso tem mais de 23 verificações de segurança que bloqueiam padrões perigosos.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">23+ Verificações de Segurança</h3>
+        <p class="text-neutral-300 leading-relaxed mb-4">A BashTool bloqueia:</p>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Substituição de comando:</strong> <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">$()</code> e crases — previne injeção</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Comandos Zsh perigosos:</strong> <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">zmodload</code>, <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">sysopen</code>, <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">syswrite</code></span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Flags ofuscadas:</strong> Flags que escondem comportamento real</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Injeção de IFS:</strong> Manipulação do separador de campos</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Unicode tricks:</strong> Caracteres Unicode que parecem espaço mas não são</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Caracteres de controle:</strong> Bytes invisíveis que alteram comportamento</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300"><strong class="text-neutral-100">Comandos compostos:</strong> <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">cmd1 && cmd2</code> são divididos e cada parte é verificada independentemente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Alerta -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-3">⚠️ Por Que Tanta Proteção?</h3>
+        <p class="text-neutral-300 leading-relaxed">Execução de shell é o maior vetor de ataque em agentes de IA. Um comando malicioso pode: deletar arquivos, instalar malware, exfiltrar dados, comprometer credenciais. As 23+ verificações são a diferença entre um agente útil e um vetor de ataque.</p>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Classificador de ML Opcional</h3>
+        <p class="text-neutral-300 leading-relaxed">Além das verificações baseadas em regras, existe um classificador de machine learning opcional que pode aprovar ou negar comandos automaticamente com base na compreensão semântica — não apenas em padrões de texto.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">🔎 ToolSearch e Deferimento — Carregamento sob demanda</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Com 40+ ferramentas, listar todas de uma vez sobrecarregaria o contexto do modelo. A solução? Carregamento sob demanda via ToolSearch — ferramentas são carregadas apenas quando necessárias.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Lazy Loading de Ferramentas</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">O método <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">shouldDefer</code> marca ferramentas para carregamento diferido</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Ferramentas diferidas aparecem apenas pelo nome — sem schema de parâmetros</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Quando o modelo quer usar uma ferramenta diferida, chama ToolSearch</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">ToolSearch retorna o schema completo, permitindo a chamada</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Resultado: contexto enxuto + acesso completo quando necessário</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Eficiência de Contexto</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">40+ schemas de ferramentas consumiriam milhares de tokens do contexto</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Com deferimento, apenas ~12 ferramentas essenciais são carregadas por padrão</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">As demais ficam disponíveis via ToolSearch sob demanda</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <span class="text-neutral-300">Economia estimada: centenas de tokens por mensagem, acumulando ao longo da conversa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4">✅ Fazer</h3>
+          <div class="space-y-3">
+            <div class="flex items-start space-x-3">
+              <span class="text-emerald-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Confiar no sistema de carregamento automático</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-emerald-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Usar ToolSearch quando precisar de ferramentas específicas</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-emerald-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Entender que nem todas as ferramentas aparecem na lista inicial</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4">❌ Evitar</h3>
+          <div class="space-y-3">
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Tentar listar todas as ferramentas de uma vez</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Ignorar que existem ferramentas além das visíveis</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <span class="text-neutral-300">Forçar o carregamento de ferramentas desnecessárias</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">40+ ferramentas seguem um padrão universal com ~30 métodos</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">call(), inputSchema (Zod), checkPermissions() são o núcleo</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Permissões em 3 níveis: allow, deny, ask — configuráveis via settings.json</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Ferramentas read-only rodam em paralelo, modificações são exclusivas</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">BashTool tem 23+ verificações — a mais protegida do sistema</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">ToolSearch permite carregamento sob demanda para manter contexto enxuto</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-emerald-400 mb-2">Próxima Trilha:</h3>
+          <p class="text-neutral-300">Trilha 2 - Núcleo: Arquitetura Profunda do Claude Code</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="../trilha2/index.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Próxima Trilha: Núcleo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 6.2 — Tool Calling com LLMs Locais | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    /* Rose - trilha color */
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    /* Blue - data boxes */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    /* Emerald / Red - fazer/evitar */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    /* Primary */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    /* Sky & Yellow */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    /* Nav overrides */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-rose-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-rose-400">Trilha 6</a>
+      <span>/</span>
+      <span class="text-rose-400">Módulo 6.2</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">MÓDULO 6.2</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🔗 Tool Calling com LLMs Locais</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Como fazer modelos locais chamarem ferramentas: schemas, fluxo completo, thinking modes, streaming e comparação com APIs cloud.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">Avançado</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-rose-400">Prática</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">🔧 Como Funciona</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Tool calling permite que o LLM "chame" funções no seu código. Você envia a mensagem do usuário junto com uma lista de ferramentas disponíveis (schemas JSON). O modelo analisa a intenção e responde com uma chamada estruturada indicando qual ferramenta usar e com quais argumentos.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Tool Calling com Ollama</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm"><code class="text-neutral-300">response = chat(
+    model='qwen3:8b',
+    messages=[{'role': 'user', 'content': 'Read /tmp/hello.txt'}],
+    tools=[{
+        'type': 'function',
+        'function': {
+            'name': 'read_file',
+            'description': 'Read a file from disk',
+            'parameters': {
+                'type': 'object',
+                'properties': {'path': {'type': 'string'}},
+                'required': ['path']
+            }
+        }
+    }],
+    stream=False,
+    options={'num_ctx': 65536}
+)
+<span class="text-rose-400"># response.message.tool_calls contém as chamadas</span></code></pre>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Sempre stream=False para Tools</h3>
+        <p class="text-neutral-300 leading-relaxed">Quando enviando ferramentas, use <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">stream=False</code>. O modelo precisa gerar o JSON completo da tool call antes que você possa processá-lo. Streaming parcial de JSON é problemático e pode causar erros de parsing.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">📋 Formato dos Schemas</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Cada ferramenta precisa de um schema JSON que descreve seu nome, propósito e parâmetros. O formato segue o padrão OpenAI function calling — o que significa que schemas escritos para GPT-4 funcionam com Qwen3 no Ollama sem alteração.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Schemas Completos — 4 Ferramentas</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm"><code class="text-neutral-300">TOOLS = [
+    {
+        'type': 'function',
+        'function': {
+            'name': 'read_file',
+            'description': 'Read the full contents of a file given its path',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'path': {'type': 'string', 'description': 'Absolute file path'}
+                },
+                'required': ['path']
+            }
+        }
+    },
+    {
+        'type': 'function',
+        'function': {
+            'name': 'write_file',
+            'description': 'Write content to a file, creating it if needed',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'path': {'type': 'string', 'description': 'File path to write'},
+                    'content': {'type': 'string', 'description': 'Content to write'}
+                },
+                'required': ['path', 'content']
+            }
+        }
+    },
+    {
+        'type': 'function',
+        'function': {
+            'name': 'run_shell',
+            'description': 'Execute a shell command and return stdout+stderr',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'command': {'type': 'string', 'description': 'Shell command'}
+                },
+                'required': ['command']
+            }
+        }
+    },
+    {
+        'type': 'function',
+        'function': {
+            'name': 'search_in_files',
+            'description': 'Search for a pattern in files using grep',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'pattern': {'type': 'string', 'description': 'Regex pattern'},
+                    'path': {'type': 'string', 'description': 'Directory to search'}
+                },
+                'required': ['pattern', 'path']
+            }
+        }
+    }
+]</code></pre>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Compatibilidade OpenAI</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Formato idêntico:</strong> o schema <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">type: function</code> é o mesmo usado pela OpenAI e Anthropic</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Migração fácil:</strong> trocar de Ollama local para API cloud requer mudar apenas o client, não os schemas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">JSON Schema:</strong> os parâmetros seguem JSON Schema draft-07 — suporta types, enums, descriptions e required</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">🔄 O Fluxo Completo</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Tool calling não é uma chamada única — é um loop. Você envia a mensagem com tools, o modelo responde com tool_calls, você executa as ferramentas, envia os resultados de volta, e o modelo gera a resposta final (ou pede mais ferramentas). Este ciclo repete até o modelo responder sem tool calls.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Loop de Tool Calling</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-6"><code class="text-neutral-300"><span class="text-rose-400"># 1. Enviar com tools</span>
+response = chat(model, messages, tools=TOOLS)
+
+<span class="text-rose-400"># 2. Checar tool_calls</span>
+if response.message.tool_calls:
+    for tc in response.message.tool_calls:
+        result = TOOL_MAP[tc.function.name](**tc.function.arguments)
+        messages.append({
+            'role': 'tool',
+            'content': result,
+            'name': tc.function.name
+        })
+    <span class="text-rose-400"># 3. Repetir</span></code></pre>
+
+        <!-- Timeline visual -->
+        <div class="space-y-4">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center text-rose-400 font-bold text-sm">1</div>
+            <div>
+              <p class="text-neutral-100 font-semibold">Enviar mensagem + schemas das tools</p>
+              <p class="text-neutral-400 text-sm">O modelo recebe o contexto e sabe quais ferramentas existem</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center text-rose-400 font-bold text-sm">2</div>
+            <div>
+              <p class="text-neutral-100 font-semibold">Modelo responde com tool_calls (JSON)</p>
+              <p class="text-neutral-400 text-sm">Indica qual ferramenta usar e com quais argumentos</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center text-rose-400 font-bold text-sm">3</div>
+            <div>
+              <p class="text-neutral-100 font-semibold">Executar ferramenta e enviar resultado</p>
+              <p class="text-neutral-400 text-sm">O resultado vai como mensagem role: "tool" de volta ao modelo</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-rose-500/20 rounded-full flex items-center justify-center text-rose-400 font-bold text-sm">4</div>
+            <div>
+              <p class="text-neutral-100 font-semibold">Modelo gera resposta final (ou pede mais tools)</p>
+              <p class="text-neutral-400 text-sm">O loop continua até o modelo responder sem tool_calls</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">🧠 Thinking vs Non-Thinking</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Modelos Qwen3 suportam dois modos de raciocínio: non-thinking (rápido, direto) e thinking (com cadeia de pensamento em blocos <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">&lt;think&gt;</code>). Para tool calling, non-thinking é geralmente melhor — mais rápido e menos propenso a gerar JSON malformado.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Modos de Raciocínio</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm"><code class="text-neutral-300"><span class="text-rose-400"># Non-thinking (rápido, para tools):</span>
+<span class="text-rose-400"># Basta enviar normalmente — Qwen3 usa non-thinking por default com tools</span>
+
+<span class="text-rose-400"># Thinking (para planejamento):</span>
+<span class="text-rose-400"># Adicione instrução no system prompt: "Think step by step"</span>
+<span class="text-rose-400"># O modelo emitirá &lt;think&gt;...&lt;/think&gt; blocks</span>
+
+<span class="text-rose-400"># IMPORTANTE: Strip &lt;think&gt; do histórico!</span>
+import re
+clean = re.sub(r'&lt;think&gt;.*?&lt;/think&gt;', '', content, flags=re.DOTALL).strip()</code></pre>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Parâmetros Recomendados para Qwen3</h3>
+        <p class="text-neutral-300 leading-relaxed">Use <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">temperature=0.6</code>, <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">top_p=0.95</code>, <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">top_k=20</code> como baseline. Esses valores foram otimizados pelo time da Alibaba para balancear criatividade e consistência no tool calling.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🌊 Streaming com Ferramentas</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Streaming e tool calling têm uma tensão natural: streaming quer enviar tokens incrementalmente, mas tool calls precisam do JSON completo para serem executadas. A solução é uma abordagem híbrida — stream para texto, não-stream para tools.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Abordagem Híbrida</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm"><code class="text-neutral-300"><span class="text-rose-400"># LIMITAÇÃO: stream=True + tools não é incremental</span>
+<span class="text-rose-400"># O modelo gera JSON completo antes do stream terminar</span>
+
+<span class="text-rose-400"># SOLUÇÃO: Abordagem híbrida</span>
+<span class="text-rose-400"># - Tool turns: stream=False (precisa do JSON completo)</span>
+<span class="text-rose-400"># - Text turns: stream=True (UX melhor)</span></code></pre>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs">stream=False</code> para chamadas com tools</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs">stream=True</code> para respostas de texto ao usuário</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Mostrar indicador de progresso durante tool execution</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Tentar parsear JSON incremental de tool calls em stream</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Usar <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs">stream=True</code> sempre — tool calls ficam quebradas</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Bloquear a UI inteira durante tool execution sem feedback</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">⚖️ Local vs API</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A decisão entre rodar localmente (Ollama) ou usar uma API cloud (Claude, OpenAI) não é binária. Cada abordagem tem trade-offs claros em custo, latência, qualidade e privacidade. Muitos projetos de produção usam ambos — local para desenvolvimento, API para deploy.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-rose-400 mb-4">Comparativo: Local vs API</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-rose-500/30">
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Aspecto</th>
+                <th class="text-left py-2 pr-4 text-rose-400 font-semibold">Local (Ollama)</th>
+                <th class="text-left py-2 text-rose-400 font-semibold">API (Claude/OpenAI)</th>
+              </tr>
+            </thead>
+            <tbody class="text-neutral-300">
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Custo</td>
+                <td class="py-2 pr-4">$0</td>
+                <td class="py-2">$$/token</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Latência</td>
+                <td class="py-2 pr-4">1-5s/turn</td>
+                <td class="py-2">0.5-2s/turn</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Contexto</td>
+                <td class="py-2 pr-4">8-128K</td>
+                <td class="py-2">128K-1M</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Tool calling</td>
+                <td class="py-2 pr-4">Bom (Qwen3+)</td>
+                <td class="py-2">Excelente</td>
+              </tr>
+              <tr class="border-b border-dark-600">
+                <td class="py-2 pr-4 font-medium text-neutral-100">Privacidade</td>
+                <td class="py-2 pr-4">Total</td>
+                <td class="py-2">Dados vão pro cloud</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-medium text-neutral-100">Qualidade</td>
+                <td class="py-2 pr-4">35-70% SWE</td>
+                <td class="py-2">72-77% SWE</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Quando Usar Cada Um</h3>
+        <p class="text-neutral-300 leading-relaxed"><strong class="text-neutral-100">Local:</strong> desenvolvimento, testes, projetos pessoais, dados sensíveis, prototipagem rápida sem custo. <strong class="text-neutral-100">API:</strong> produção com usuários finais, tarefas que exigem contexto longo (>128K), cenários onde qualidade máxima é crítica. <strong class="text-neutral-100">Ambos:</strong> desenvolver com local, validar com API antes de deploy.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Tool calling envia schemas JSON e recebe chamadas estruturadas do LLM</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Schemas seguem formato OpenAI — compatíveis entre provedores</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O fluxo é um loop: enviar → tool_calls → executar → resultado → repetir</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Non-thinking mode é melhor para tool calling, thinking para planejamento</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Streaming híbrido: stream=False para tools, stream=True para texto</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-rose-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Local vs API: custo zero vs qualidade máxima — projetos maduros usam ambos</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-rose-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">6.3 - Construindo o Agent Loop Local</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-6-3.html" class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

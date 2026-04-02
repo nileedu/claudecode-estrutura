@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 4.4 — Memória e Contexto | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217, 119, 6, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217, 119, 6, 0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217, 119, 6, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(20, 184, 166, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(244, 63, 94, 0.08); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .bg-amber-900\/40 { background-color: rgba(217, 119, 6, 0.06); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-amber-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-amber-400">Trilha 4</a>
+      <span>/</span>
+      <span class="text-amber-400">Módulo 4.4</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">MÓDULO 4.4</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧠 Memória e Contexto</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">A janela de contexto é o maior limitador de um agente. Entenda como gerenciá-la, como persistir informação entre sessões e como comprimir sem perder o essencial.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-amber-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-amber-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-amber-400">Básico</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-amber-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">📏 Janela de Contexto</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A janela de contexto é o limite de tokens que o LLM processa de uma vez. Tudo — system prompt, histórico, schemas de ferramentas, resultados — precisa caber nessa janela. Quando ultrapassa, algo precisa ser cortado. Modelos variam de 8K tokens (modelos locais) a 1M tokens (Claude).</p>
+
+      <!-- Box: Conceito Principal - Tabela -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">Janelas de Contexto por Modelo</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-dark-600">
+                <th class="text-left py-3 px-4 text-amber-400 font-semibold">Modelo</th>
+                <th class="text-left py-3 px-4 text-amber-400 font-semibold">Contexto</th>
+                <th class="text-left py-3 px-4 text-amber-400 font-semibold">Nota</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-dark-700">
+                <td class="py-3 px-4 text-neutral-100">Modelos locais (Llama, etc.)</td>
+                <td class="py-3 px-4 text-neutral-300">8K - 32K</td>
+                <td class="py-3 px-4 text-neutral-400">Muito limitado para agentes complexos</td>
+              </tr>
+              <tr class="border-b border-dark-700">
+                <td class="py-3 px-4 text-neutral-100">GPT-4o</td>
+                <td class="py-3 px-4 text-neutral-300">128K</td>
+                <td class="py-3 px-4 text-neutral-400">Suficiente para a maioria das tarefas</td>
+              </tr>
+              <tr class="border-b border-dark-700">
+                <td class="py-3 px-4 text-neutral-100">Claude Sonnet/Haiku</td>
+                <td class="py-3 px-4 text-neutral-300">200K</td>
+                <td class="py-3 px-4 text-neutral-400">Amplo para projetos médios</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 text-neutral-100">Claude Opus (1M)</td>
+                <td class="py-3 px-4 text-neutral-300">1M</td>
+                <td class="py-3 px-4 text-neutral-400">Cabe codebases inteiras no contexto</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Contexto Grande Não Significa Infinito</h3>
+        <p class="text-neutral-300 leading-relaxed">Mesmo com 1M de tokens, a qualidade degrada em contextos muito longos — o modelo tende a "esquecer" informações no meio. Além disso, mais tokens = mais custo e mais latência. A melhor estratégia é manter o contexto enxuto e relevante, independente do limite máximo disponível.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">🧠 Contexto = Memória de Trabalho</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O que está no contexto, o agente sabe. O que não está, não existe. É como a RAM de um computador — rápida, acessível, mas limitada. Se você remove algo do contexto, o agente esquece completamente. Não há "lembrança vaga" — é binário: está lá ou não.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">Contexto é Tudo que o Agente Sabe</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Presente = sabe</strong> — se a informação está no contexto, o agente pode usá-la</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Ausente = não existe</strong> — sem "lembrança parcial" — é tudo ou nada</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Posição importa</strong> — informações no início e no fim do contexto são mais bem lembradas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Analogia: RAM</strong> — rápida e acessível, mas volátil e limitada em tamanho</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 O Que Consome Contexto</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">System prompt:</strong> instruções base, CLAUDE.md, regras — sempre presente, consome contexto fixo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Histórico de mensagens:</strong> cada mensagem trocada acumula tokens — cresce a cada turno</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tool schemas:</strong> a descrição de cada ferramenta disponível ocupa espaço no contexto</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Resultados de ferramentas:</strong> o output de cada chamada de ferramenta volta para o contexto</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">💾 Memória Persistente vs Sessão</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Memória de sessão são as mensagens da conversa atual — desaparecem quando a sessão termina. Memória persistente sobrevive entre sessões — é salva em disco e recarregada automaticamente. Um agente eficaz usa ambas estrategicamente.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_memoria_pt.png" alt="Diagrama do sistema de memória do Claude Code" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Memória persistente vs memória de sessão — como o Claude Code gerencia os dois tipos.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">4 Tipos de Memória no Claude Code</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Memória de Usuário</strong> — preferências pessoais salvas em <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">~/.claude/CLAUDE.md</code>, carregadas em toda sessão</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Memória de Feedback</strong> — correções do usuário que o agente salva para não repetir erros</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Memória de Projeto</strong> — regras e padrões do projeto em <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">CLAUDE.md</code> na raiz do repositório</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Memória de Referência</strong> — documentação e guias que o agente pode consultar sob demanda</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Sessão vs Persistente na Prática</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Sessão:</strong> histórico de mensagens, resultados de ferramentas, estado da tarefa atual — tudo volátil</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Persistente:</strong> CLAUDE.md, settings.json, feedback salvo — sobrevive entre sessões</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Carregamento:</strong> memória persistente é injetada no início do contexto de cada nova sessão</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Custo:</strong> memória persistente consome tokens fixos em toda sessão — mantenha-a enxuta</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">📦 Compressão de Contexto</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Quando o contexto fica cheio, o Claude Code ativa um pipeline de compressão em 4 estágios. Cada estágio remove informação menos importante, mantendo o essencial. Entender esse pipeline é chave para manter a qualidade em sessões longas.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_compactacao_pt.png" alt="Diagrama do pipeline de compressão de contexto" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Pipeline de compressão de contexto — 4 estágios, do mais leve ao mais agressivo.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">Pipeline de Compressão em 4 Estágios</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">1. Microcompact</strong> — comprime resultados de ferramentas grandes (ex: outputs de grep com centenas de linhas) mantendo apenas as partes relevantes</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">2. Corte de Histórico</strong> — remove mensagens antigas do início da conversa, preservando as mais recentes e o system prompt</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">3. Autocompact</strong> — o LLM resume a conversa inteira em um sumário conciso, substituindo o histórico original</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">4. Session Memory</strong> — salva o sumário em disco para que a próxima sessão comece com contexto residual</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Quando Usar /compact</h3>
+        <p class="text-neutral-300 leading-relaxed">Use <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">/compact</code> manualmente quando perceber que o agente está "esquecendo" coisas que você disse antes, quando as respostas ficam mais lentas, ou quando você muda de assunto drasticamente. O comando força o estágio 3 (Autocompact), liberando espaço sem perder o essencial. Em sessões longas, faça /compact a cada 30-40 mensagens como hábito.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">📝 System Prompt como DNA</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O system prompt define a personalidade, regras e capacidades do agente. É a primeira coisa no contexto e permanece lá em toda interação. Pense nele como o DNA — determina o comportamento fundamental, mas consome espaço fixo valioso.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">System Prompt = Identidade do Agente</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Sempre presente</strong> — o system prompt é injetado no início de toda requisição ao LLM</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Define personalidade</strong> — tom, estilo, idioma, nível de detalhe das respostas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Define regras</strong> — o que o agente pode e não pode fazer, limites de segurança</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Define capacidades</strong> — lista de ferramentas disponíveis e como usá-las</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">System prompt curto e objetivo — cada token conta</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Incluir regras de segurança claras e não-ambíguas</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Definir o formato esperado de respostas</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Separar instruções permanentes de contextuais</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">System prompt longo e genérico — desperdiça contexto valioso</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Repetir instruções que já estão nas descrições de ferramentas</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Incluir exemplos extensos que raramente são necessários</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Misturar regras de segurança com dicas de estilo</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">📋 CLAUDE.md e Configuração</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O CLAUDE.md é o manual do projeto — contém regras, padrões e decisões arquiteturais que o agente precisa seguir. O settings.json controla permissões e comportamento. Juntos, eles separam configuração do código e tornam o agente previsível e controlável.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">CLAUDE.md + settings.json = Controle Total</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">CLAUDE.md na raiz do projeto</strong> — regras, padrões, arquitetura. Carregado automaticamente no início de cada sessão</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">~/.claude/CLAUDE.md</strong> — preferências pessoais que se aplicam a todos os projetos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">settings.json</strong> — permissões de ferramentas, configurações de segurança, variáveis de ambiente</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Separação clara</strong> — CLAUDE.md para "o quê" (regras), settings.json para "como" (permissões)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Na Próxima Trilha Você Implementa Tudo Isso em Python</h3>
+        <p class="text-neutral-300 leading-relaxed">Tudo o que vimos nesta trilha — loop agentic, ferramentas, permissões, memória, contexto — será implementado na prática na Trilha 5 (Prática). Você vai construir um agente Python completo com essas 4 ferramentas essenciais, sistema de memória persistente e gerenciamento de contexto. A teoria desta trilha é o blueprint; a próxima é a construção.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Janela de contexto varia de 8K a 1M tokens — tudo precisa caber, incluindo prompts, histórico e tool schemas</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Contexto é memória de trabalho — o que está lá o agente sabe, o que não está não existe</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">4 tipos de memória persistente no Claude Code: Usuário, Feedback, Projeto e Referência</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Pipeline de compressão em 4 estágios: Microcompact, Corte, Autocompact e Session Memory</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">System prompt é o DNA do agente — curto, objetivo e com regras claras de segurança</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-amber-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">CLAUDE.md (regras) + settings.json (permissões) = controle total sobre o comportamento do agente</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-teal-400 mb-2">Próxima Trilha:</h3>
+          <p class="text-neutral-300">Trilha 5 — Prática: Construindo seu Agente Python</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="../trilha5/index.html" class="flex-1 text-center px-6 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors">Próxima Trilha: Prática →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

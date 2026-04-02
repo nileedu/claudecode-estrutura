@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 2.4 — Nunca Esquece: O Sistema de Memória | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37, 99, 235, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-green-400 { color: #059669; }
+    html:not(.dark) .bg-green-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-green-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-blue-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-blue-400">Trilha 2</a>
+      <span>/</span>
+      <span class="text-blue-400">Módulo 2.4</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">MÓDULO 2.4</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧠 Nunca Esquece: O Sistema de Memória</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Quatro tipos de memória, mais um sistema de consolidação inspirado no sono biológico. O Claude Code lembra de você, dos seus projetos e dos seus feedbacks entre sessões.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-blue-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-blue-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-blue-400">Intermediário</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-blue-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 — MEMORY.md -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">📝 MEMORY.md — O Índice Central da Memória</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O coração do sistema de memória é um arquivo chamado <strong class="text-neutral-100">MEMORY.md</strong>. Ele funciona como um índice leve — aproximadamente 150 caracteres por linha, com no máximo 200 linhas — que é carregado sempre no contexto do agente. Não armazena dados detalhados: apenas aponta para arquivos de tópicos mais específicos, que são buscados sob demanda.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_memoria_pt.png" alt="Diagrama do sistema de memória do Claude Code" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Arquitetura do sistema de memória: índice central, tópicos sob demanda e transcrições persistidas.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">Arquitetura em 3 Camadas</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Camada 1 — Índice (MEMORY.md):</strong> Sempre em contexto. Linhas curtas com ponteiros para tópicos. Limite rígido de 200 linhas para não inflacionar o prompt</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Camada 2 — Tópicos:</strong> Arquivos detalhados por assunto (usuário, projeto, feedback). Buscados sob demanda quando o índice indica relevância</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Camada 3 — Transcrições:</strong> Logs completos de sessões anteriores. Base bruta para consolidação pelo AutoDream</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Disciplina de Escrita</h3>
+        <p class="text-neutral-300 leading-relaxed">O MEMORY.md exige disciplina rigorosa de escrita. O agente <strong class="text-neutral-100">só atualiza o índice após a gravação real</strong> dos dados nos arquivos de tópicos. Nunca antecipa ou assume — primeiro persiste, depois referencia. Isso evita ponteiros quebrados e garante consistência entre o índice e os dados reais.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 — Memória do Usuário -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">👤 Memória do Usuário — Quem Você É</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A memória do usuário registra quem você é: seu papel, suas preferências de trabalho, seu nível de expertise e seu estilo de comunicação. Com essas informações, o Claude Code adapta automaticamente a profundidade e o tom das respostas — tratando um desenvolvedor senior de forma diferente de um iniciante.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">O Que É Armazenado</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Papel profissional:</strong> Backend engineer, tech lead, fullstack, devops — influencia vocabulário e profundidade técnica</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Nível de expertise:</strong> Iniciante recebe mais explicações; senior recebe código direto com trade-offs</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Preferências de estilo:</strong> Prefere TypeScript ou Go? Testes unitários ou integração? Comentários inline ou documentação separada?</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Idioma e tom:</strong> Respostas formais vs informais, idioma preferido para comunicação</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Adaptação na Prática</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Senior pede refactor:</strong> Recebe diff direto com análise de trade-offs e impacto em performance</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Iniciante pede refactor:</strong> Recebe explicação passo a passo, o porquê de cada mudança e links para documentação</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">DevOps pede deploy:</strong> Recebe comandos com flags específicas e verificações de segurança relevantes para infra</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 — Memória de Feedback -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">💬 Memória de Feedback — Erros e Acertos</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A memória de feedback é <strong class="text-neutral-100">bidirecional</strong>: registra tanto correções (o que deu errado e não deve repetir) quanto confirmações de sucesso (abordagens que funcionaram e devem ser preservadas). Isso cria um ciclo de melhoria contínua — o agente aprende com cada interação.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">Feedback Bidirecional</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Correções (negativo):</strong> "Não use var, use const" — registrado para evitar repetição do erro</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Validações (positivo):</strong> "Perfeito, sempre faça assim" — registrado para preservar a abordagem</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Contexto da correção:</strong> Não apenas o que mudou, mas em que situação — para aplicar corretamente em cenários semelhantes</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Evolução temporal:</strong> Feedbacks recentes têm mais peso que antigos — preferências mudam</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Fazer / Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-green-900/20 rounded-xl border border-green-500/30 p-6">
+          <h3 class="text-lg font-bold text-green-400 mb-4">&#10003; Fazer</h3>
+          <div class="space-y-3">
+            <div class="flex items-start space-x-3">
+              <span class="text-green-400 mt-1">&#9679;</span>
+              <p class="text-neutral-300">Confirmar abordagens que funcionaram bem</p>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-green-400 mt-1">&#9679;</span>
+              <p class="text-neutral-300">Corrigir padrões indesejados imediatamente</p>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-green-400 mt-1">&#9679;</span>
+              <p class="text-neutral-300">Explicar o porquê da correção para contexto</p>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-green-400 mt-1">&#9679;</span>
+              <p class="text-neutral-300">Dar feedback específico e acionável</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4">&#10007; Evitar</h3>
+          <div class="space-y-3">
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <p class="text-neutral-300">Ignorar erros esperando que se corrijam sozinhos</p>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <p class="text-neutral-300">Dar feedback vago como "está errado"</p>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <p class="text-neutral-300">Contradizer feedbacks anteriores sem explicar</p>
+            </div>
+            <div class="flex items-start space-x-3">
+              <span class="text-red-400 mt-1">&#9679;</span>
+              <p class="text-neutral-300">Assumir que o agente "já sabe" sem registrar</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 — Memória de Projeto -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">📋 Memória de Projeto — Trabalho Ativo e Decisões</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A memória de projeto rastreia o trabalho ativo: metas correntes, prazos, decisões arquiteturais e estado de tarefas. É o tipo de memória mais dinâmico — muda constantemente conforme o projeto evolui. Um detalhe elegante: datas relativas são convertidas em absolutas para evitar ambiguidade.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">O Que É Rastreado</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Metas do projeto:</strong> Objetivos de alto nível — "migrar para microserviços", "implementar auth OAuth2"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Decisões arquiteturais:</strong> Escolhas registradas com justificativa — "PostgreSQL em vez de MongoDB porque relacional"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Estado de tarefas:</strong> O que foi feito, o que está pendente, bloqueios identificados</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Prazos e marcos:</strong> Datas absolutas para entregas e milestones</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Por Que Datas Absolutas?</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Problema:</strong> Você diz "entrega na quinta". Mas qual quinta? A de hoje? Da semana que vem?</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Solução:</strong> O sistema converte "quinta" para "2026-03-05" no momento do registro</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Benefício:</strong> Sessões futuras (dias ou semanas depois) ainda entendem o prazo correto</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Consistência:</strong> Evita que "amanhã" fique eternamente como "amanhã" em memórias antigas</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 — Memória de Referência -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🔗 Memória de Referência — Ponteiros para o Mundo Externo</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A memória de referência armazena ponteiros para sistemas externos ao código. O agente sabe onde buscar informações fora do repositório — dashboards de monitoramento, sistemas de tickets, canais de comunicação e documentação externa. São URLs, identificadores e instruções de acesso.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">Tipos de Referências</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Linear/Jira:</strong> IDs de projetos e issues — o agente pode buscar status e detalhes de tarefas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Grafana/Datadog:</strong> URLs de dashboards de monitoramento — consultar métricas em tempo real</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Slack/Discord:</strong> Canais relevantes para notificações e busca de contexto de discussões</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Documentação externa:</strong> Confluence, Notion, wikis internas — fontes de verdade fora do código</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Referências Úteis para Registrar</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Dashboard de produção:</strong> "Grafana em https://grafana.empresa.com/d/prod — verificar antes de deploys"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Board do projeto:</strong> "Linear projeto BACK — sprint atual tem foco em performance"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Canal de alertas:</strong> "Slack #prod-alerts — checar antes de investigar bugs reportados"</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Documentação de API:</strong> "Swagger em /api/docs — fonte de verdade para contratos"</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 — AutoDream -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">🌙 AutoDream — Consolidação Tipo Sono Biológico</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O AutoDream é o sistema de consolidação de memória inspirado no sono biológico. Assim como o cérebro consolida aprendizados durante o sono, o AutoDream processa transcrições de sessões anteriores para extrair, organizar e podar informações na memória persistente. Ele só roda quando há material suficiente para processar: mais de 24 horas desde a última consolidação e mais de 5 sessões novas acumuladas.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_autodream_pt.png" alt="Diagrama do processo AutoDream" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">O ciclo AutoDream: quatro fases de consolidação de memória inspiradas no sono biológico.</div>
+      </div>
+
+      <!-- Box: Conceito Principal — 4 Fases -->
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">As 4 Fases do AutoDream</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-4 relative">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 border-2 border-blue-500/50 flex items-center justify-center text-blue-400 font-bold z-10">1</div>
+            <div class="pt-1">
+              <h4 class="font-bold text-neutral-100 mb-1">Orientar</h4>
+              <p class="text-neutral-300 text-sm leading-relaxed">Lê a memória existente para entender o estado atual. Define o que já se sabe e o que falta.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-4 relative">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 border-2 border-blue-500/50 flex items-center justify-center text-blue-400 font-bold z-10">2</div>
+            <div class="pt-1">
+              <h4 class="font-bold text-neutral-100 mb-1">Reunir</h4>
+              <p class="text-neutral-300 text-sm leading-relaxed">Processa transcrições de sessões recentes. Extrai informações novas, feedbacks, decisões e padrões.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-4 relative">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 border-2 border-blue-500/50 flex items-center justify-center text-blue-400 font-bold z-10">3</div>
+            <div class="pt-1">
+              <h4 class="font-bold text-neutral-100 mb-1">Consolidar</h4>
+              <p class="text-neutral-300 text-sm leading-relaxed">Integra novas informações com a memória existente. Resolve conflitos, atualiza fatos e sintetiza padrões recorrentes.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-4 relative">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 border-2 border-blue-500/50 flex items-center justify-center text-blue-400 font-bold z-10">4</div>
+            <div class="pt-1">
+              <h4 class="font-bold text-neutral-100 mb-1">Podar</h4>
+              <p class="text-neutral-300 text-sm leading-relaxed">Remove informações obsoletas, duplicatas e detalhes de baixa relevância. Mantém a memória enxuta e dentro dos limites de tamanho.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados — Lock File -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Lock File Elegante</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Problema:</strong> Múltiplas instâncias do Claude Code não podem rodar AutoDream simultaneamente — corromperia a memória</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Solução:</strong> Um lock file funciona como máquina de estado minimalista</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">mtime = timestamp:</strong> O modification time do arquivo indica quando o lock foi adquirido — sem precisar ler o conteúdo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">body = PID:</strong> O conteúdo do arquivo é o PID do processo que detém o lock — permite detectar processos mortos e limpar locks órfãos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Elegância:</strong> Duas informações em um único arquivo usando metadados do filesystem — zero dependências externas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática — Team Memory Sync -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Team Memory Sync</h3>
+        <p class="text-neutral-300 leading-relaxed mb-4">O AutoDream também suporta sincronização de memória entre membros do time via <strong class="text-neutral-100">Team Memory Sync</strong>. Cada membro pode compartilhar memórias do projeto com colegas, criando uma base de conhecimento coletiva.</p>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Scanner de segredos:</strong> Antes de compartilhar, um scanner automático filtra tokens, senhas e dados sensíveis</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Merge inteligente:</strong> Memórias de diferentes membros são combinadas sem duplicatas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Contexto compartilhado:</strong> Decisões arquiteturais e convenções ficam acessíveis para todo o time</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">MEMORY.md é um índice leve (~150 chars/linha, max 200 linhas) sempre em contexto, que aponta para tópicos sob demanda</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Memória do Usuário adapta respostas ao seu papel, expertise e preferências de estilo</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Memória de Feedback é bidirecional: registra erros para evitar E acertos para preservar</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Memória de Projeto rastreia metas, decisões e prazos — com datas absolutas para consistência</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Memória de Referência armazena ponteiros para sistemas externos: Linear, Grafana, Slack</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">AutoDream consolida memória em 4 fases (Orientar, Reunir, Consolidar, Podar) com lock file elegante e Team Memory Sync</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-blue-400 mb-2">Último módulo da Trilha 2!</h3>
+          <p class="text-neutral-300">Próximo passo: Trilha 3 — Avançado. Aprofunde seus conhecimentos em técnicas avançadas de uso do Claude Code.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="../trilha3/index.html" class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors">Próxima Trilha: Avançado →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

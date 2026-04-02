@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 5.2 — Construindo o Sistema de Ferramentas | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    /* Teal - trilha color */
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13, 148, 136, 0.18); }
+    /* Blue - data boxes */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    /* Emerald / Red - fazer/evitar */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    /* Primary */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    /* Sky & Yellow */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    /* Nav overrides */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #e11d48; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-teal-400 bg-teal-500/10">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-teal-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-teal-400">Trilha 5</a>
+      <span>/</span>
+      <span class="text-teal-400">Módulo 5.2</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-teal-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-teal-500/20 text-teal-400 text-xs font-semibold rounded-full mb-4">MÓDULO 5.2</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">🔧 Construindo o Sistema de Ferramentas</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Implementação completa das ferramentas do agente: leitura, escrita, execução de comandos, busca em arquivos e orquestração.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">Intermediário</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-teal-400">Prática</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">🏗️ Classe Base Tool</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Toda ferramenta do agente segue a mesma interface: tem um nome, uma descrição, parâmetros tipados e um método <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">execute()</code>. Essa uniformidade é o que permite ao Tool Registry tratar todas as ferramentas da mesma forma — registrar, descobrir e executar sem conhecer a implementação interna.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_ferramentas_pt.png" alt="Diagrama do sistema de ferramentas" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Sistema de ferramentas — cada ferramenta implementa a mesma interface base.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Interface Base de Ferramentas</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-teal-400"># tools/base.py</span>
+from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
+from typing import Any
+
+@dataclass
+class Tool(ABC):
+    """Interface base para todas as ferramentas do agente."""
+    name: str
+    description: str
+    parameters: dict = field(default_factory=dict)
+
+    @abstractmethod
+    def execute(self, **kwargs) -> str:
+        """Executa a ferramenta e retorna resultado como string."""
+        ...
+
+    def to_schema(self) -> dict:
+        """Gera o JSON schema para o LLM."""
+        return {
+            'type': 'function',
+            'function': {
+                'name': self.name,
+                'description': self.description,
+                'parameters': self.parameters
+            }
+        }
+
+<span class="text-teal-400"># Exemplo de uso:</span>
+@dataclass
+class ReadFileTool(Tool):
+    name: str = 'read_file'
+    description: str = 'Read the full contents of a file'
+    parameters: dict = field(default_factory=lambda: {
+        'type': 'object',
+        'properties': {
+            'path': {'type': 'string', 'description': 'Absolute file path'}
+        },
+        'required': ['path']
+    })
+
+    def execute(self, path: str) -> str:
+        from pathlib import Path
+        return Path(path).read_text(encoding='utf-8')</code></pre>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">📄 read_file e write_file</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">As ferramentas de leitura e escrita são a base de qualquer agente de código. <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">read_file</code> precisa lidar com encodings diferentes e arquivos inexistentes. <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">write_file</code> precisa criar diretórios pai automaticamente e reportar o resultado. Ambas devem NUNCA lançar exceções — erros viram strings de retorno para o LLM processar.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Implementação Completa — read_file e write_file</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-teal-400"># tools/file_tools.py</span>
+from pathlib import Path
+
+def read_file(path: str) -> str:
+    """Lê o conteúdo completo de um arquivo."""
+    try:
+        p = Path(path)
+        if not p.exists():
+            return f"Error: file not found: {path}"
+        if not p.is_file():
+            return f"Error: not a file: {path}"
+        <span class="text-teal-400"># Limitar tamanho para não estourar context</span>
+        content = p.read_text(encoding='utf-8')
+        if len(content) > 100_000:
+            return content[:100_000] + f"\n\n... truncated ({len(content)} total chars)"
+        return content
+    except UnicodeDecodeError:
+        return f"Error: file is binary or not UTF-8: {path}"
+    except Exception as e:
+        return f"Error: {e}"
+
+def write_file(path: str, content: str) -> str:
+    """Escreve conteúdo em um arquivo, criando diretórios se necessário."""
+    try:
+        p = Path(path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding='utf-8')
+        return f"OK: wrote {len(content)} chars to {path}"
+    except PermissionError:
+        return f"Error: permission denied: {path}"
+    except Exception as e:
+        return f"Error: {e}"
+
+<span class="text-teal-400"># Schemas para o LLM</span>
+READ_FILE_SCHEMA = {
+    'type': 'function',
+    'function': {
+        'name': 'read_file',
+        'description': 'Read the full contents of a text file given its path',
+        'parameters': {
+            'type': 'object',
+            'properties': {
+                'path': {'type': 'string', 'description': 'Absolute path to the file'}
+            },
+            'required': ['path']
+        }
+    }
+}
+
+WRITE_FILE_SCHEMA = {
+    'type': 'function',
+    'function': {
+        'name': 'write_file',
+        'description': 'Write content to a file, creating parent directories if needed',
+        'parameters': {
+            'type': 'object',
+            'properties': {
+                'path': {'type': 'string', 'description': 'Absolute path to write to'},
+                'content': {'type': 'string', 'description': 'Content to write'}
+            },
+            'required': ['path', 'content']
+        }
+    }
+}</code></pre>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Nunca Lance Exceções nas Ferramentas</h3>
+        <p class="text-neutral-300 leading-relaxed">Se uma ferramenta lança uma exceção, o loop do agente quebra. Em vez disso, retorne o erro como string: <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">return f"Error: {e}"</code>. O LLM sabe lidar com mensagens de erro — ele vai tentar outra abordagem ou reportar o problema ao usuário. O Claude Code segue exatamente esse padrão.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">💻 run_shell com Segurança</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A ferramenta <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">run_shell</code> é a mais poderosa e a mais perigosa. Ela dá ao agente acesso total ao sistema operacional — instalar pacotes, rodar testes, fazer git commits. Mas também pode deletar tudo, criar fork bombs ou minerar bitcoin. Validação de entrada e timeout são obrigatórios.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Implementação Segura — run_shell</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-teal-400"># tools/shell_tool.py</span>
+import subprocess
+import shlex
+
+<span class="text-teal-400"># Comandos que NUNCA devem ser executados</span>
+BLOCKED_PATTERNS = [
+    'rm -rf /',
+    'rm -rf /*',
+    'dd if=',
+    ':(){ :|:& };:',
+    'mkfs.',
+    '> /dev/sda',
+    'chmod -R 777 /',
+    'curl | sh',
+    'wget | sh',
+]
+
+<span class="text-teal-400"># Prefixos suspeitos que exigem cuidado extra</span>
+WARN_PREFIXES = ['sudo ', 'su ', 'docker rm', 'git push --force']
+
+def run_shell(command: str, timeout: int = 60) -> str:
+    """Executa comando shell com validação e timeout."""
+    <span class="text-teal-400"># 1. Bloquear comandos perigosos</span>
+    cmd_lower = command.lower().strip()
+    for blocked in BLOCKED_PATTERNS:
+        if blocked in cmd_lower:
+            return f"BLOCKED: dangerous command detected: '{blocked}'"
+
+    <span class="text-teal-400"># 2. Executar com timeout</span>
+    try:
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            cwd=None  <span class="text-teal-400"># herda o cwd do processo</span>
+        )
+        output = result.stdout + result.stderr
+        <span class="text-teal-400"># 3. Truncar saída longa</span>
+        if len(output) > 50_000:
+            output = output[:50_000] + f"\n... truncated ({len(output)} total chars)"
+        if not output.strip():
+            output = f"(exit code: {result.returncode}, no output)"
+        return output
+    except subprocess.TimeoutExpired:
+        return f"Error: command timed out after {timeout}s"
+    except Exception as e:
+        return f"Error: {e}"
+
+RUN_SHELL_SCHEMA = {
+    'type': 'function',
+    'function': {
+        'name': 'run_shell',
+        'description': 'Run a shell command and return stdout+stderr. Has a timeout and blocks dangerous commands.',
+        'parameters': {
+            'type': 'object',
+            'properties': {
+                'command': {'type': 'string', 'description': 'Shell command to execute'},
+                'timeout': {'type': 'integer', 'description': 'Timeout in seconds (default 60)'}
+            },
+            'required': ['command']
+        }
+    }
+}</code></pre>
+      </div>
+
+      <!-- Box: Alerta -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-3">🚨 Alerta de Segurança</h3>
+        <p class="text-neutral-300 leading-relaxed">A lista de BLOCKED_PATTERNS é apenas a primeira camada de defesa. Em produção, considere: (1) rodar o agente em um container Docker isolado, (2) usar <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">seccomp</code> para limitar syscalls, (3) montar o filesystem como read-only exceto diretórios específicos, (4) limitar CPU e memória. Nenhuma blacklist é perfeita — um LLM criativo pode encontrar formas de contornar.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">🔍 search_in_files</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Buscar texto em arquivos é essencial para um agente de código. Em vez de ler o projeto inteiro, o agente busca exatamente o que precisa — como o grep do Claude Code. Nossa implementação usa <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">pathlib.glob()</code> para encontrar arquivos e busca por regex para máxima flexibilidade.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Implementação Completa — search_in_files</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-teal-400"># tools/search_tool.py</span>
+import re
+from pathlib import Path
+
+def search_in_files(
+    pattern: str,
+    directory: str = '.',
+    glob: str = '**/*',
+    max_results: int = 50
+) -> str:
+    """Busca regex em arquivos, similar ao grep -rn."""
+    try:
+        regex = re.compile(pattern, re.IGNORECASE)
+    except re.error as e:
+        return f"Error: invalid regex: {e}"
+
+    results = []
+    dir_path = Path(directory)
+
+    if not dir_path.is_dir():
+        return f"Error: not a directory: {directory}"
+
+    for file_path in dir_path.glob(glob):
+        if not file_path.is_file():
+            continue
+        <span class="text-teal-400"># Ignorar binários e diretórios comuns</span>
+        if any(part.startswith('.') for part in file_path.parts):
+            continue
+        if file_path.suffix in ('.pyc', '.so', '.o', '.bin', '.exe'):
+            continue
+
+        try:
+            content = file_path.read_text(encoding='utf-8')
+            for i, line in enumerate(content.splitlines(), 1):
+                if regex.search(line):
+                    results.append(f"{file_path}:{i}: {line.strip()}")
+                    if len(results) >= max_results:
+                        return '\n'.join(results) + f"\n... (limited to {max_results} results)"
+        except (UnicodeDecodeError, PermissionError):
+            continue
+
+    if not results:
+        return f"No matches found for '{pattern}' in {directory}"
+    return '\n'.join(results)
+
+SEARCH_SCHEMA = {
+    'type': 'function',
+    'function': {
+        'name': 'search_in_files',
+        'description': 'Search for a regex pattern in files, like grep -rn. Returns file:line: match.',
+        'parameters': {
+            'type': 'object',
+            'properties': {
+                'pattern': {'type': 'string', 'description': 'Regex pattern to search for'},
+                'directory': {'type': 'string', 'description': 'Directory to search in (default: current)'},
+                'glob': {'type': 'string', 'description': 'Glob to filter files (default: **/*) e.g. **/*.py'}
+            },
+            'required': ['pattern']
+        }
+    }
+}</code></pre>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Performance: pathlib vs subprocess grep</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">pathlib.glob():</strong> mais portável (Windows/Linux/Mac), sem dependência externa, mas mais lento em projetos grandes</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">subprocess + ripgrep:</strong> 10-100x mais rápido, mas precisa do rg instalado — ideal para projetos com 10k+ arquivos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Dica:</strong> comece com pathlib (simples), troque para ripgrep quando a performance importar</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Claude Code usa ripgrep:</strong> o Grep tool do Claude Code é um wrapper otimizado sobre rg com caching</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">📋 Registro e Descoberta</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Agora que temos todas as ferramentas, precisamos registrá-las em um lugar central. O registro completo inclui o <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">TOOL_MAP</code> para despacho e o <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">TOOL_SCHEMAS</code> para enviar ao LLM. Esse é o ponto de integração entre as ferramentas e o loop do agente.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Registry Completo — Todas as Ferramentas</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-teal-400"># tools/registry.py</span>
+from tools.file_tools import (
+    read_file, write_file,
+    READ_FILE_SCHEMA, WRITE_FILE_SCHEMA
+)
+from tools.shell_tool import run_shell, RUN_SHELL_SCHEMA
+from tools.search_tool import search_in_files, SEARCH_SCHEMA
+import json
+
+<span class="text-teal-400"># Mapa central: nome → função</span>
+TOOL_MAP = {
+    'read_file': read_file,
+    'write_file': write_file,
+    'run_shell': run_shell,
+    'search_in_files': search_in_files,
+}
+
+<span class="text-teal-400"># Schemas para enviar ao LLM</span>
+TOOL_SCHEMAS = [
+    READ_FILE_SCHEMA,
+    WRITE_FILE_SCHEMA,
+    RUN_SHELL_SCHEMA,
+    SEARCH_SCHEMA,
+]
+
+def execute_tool(name: str, arguments: str) -> str:
+    """Despacha uma tool call do LLM para a função correta."""
+    if name not in TOOL_MAP:
+        return f"Error: unknown tool '{name}'"
+
+    try:
+        <span class="text-teal-400"># arguments vem como JSON string do LLM</span>
+        args = json.loads(arguments) if isinstance(arguments, str) else arguments
+        result = TOOL_MAP[name](**args)
+        return result
+    except json.JSONDecodeError:
+        return f"Error: invalid JSON arguments for {name}"
+    except TypeError as e:
+        return f"Error: wrong arguments for {name}: {e}"
+    except Exception as e:
+        return f"Error executing {name}: {e}"
+
+def list_tools() -> list[str]:
+    """Lista nomes de todas as ferramentas registradas."""
+    return list(TOOL_MAP.keys())
+
+def get_tool_description(name: str) -> str:
+    """Retorna a descrição de uma ferramenta."""
+    for schema in TOOL_SCHEMAS:
+        if schema['function']['name'] == name:
+            return schema['function']['description']
+    return "Unknown tool"</code></pre>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Adicionar Novas Ferramentas é Trivial</h3>
+        <p class="text-neutral-300 leading-relaxed">Para adicionar uma nova ferramenta: (1) crie a função + schema, (2) importe no registry, (3) adicione ao TOOL_MAP e TOOL_SCHEMAS. Pronto — o loop do agente e o LLM já sabem usá-la automaticamente. Não precisa alterar nenhum outro arquivo. Esse desacoplamento é a maior vantagem do padrão Registry.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">⚡ Execução Paralela</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Quando o LLM pede múltiplas ferramentas na mesma iteração, podemos executá-las em paralelo — mas com cuidado. Ferramentas de leitura (read_file, search) são seguras para paralelizar. Ferramentas de escrita (write_file, run_shell) devem ser sequenciais para evitar race conditions. O Claude Code faz exatamente isso.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-teal-400 mb-4">Execução Paralela com asyncio</h3>
+        <pre class="bg-dark-900 rounded-lg p-4 overflow-x-auto text-sm mb-4"><code class="text-neutral-300"><span class="text-teal-400"># tools/parallel.py</span>
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+from tools.registry import execute_tool, TOOL_MAP
+
+<span class="text-teal-400"># Ferramentas que podem rodar em paralelo</span>
+READ_ONLY_TOOLS = {'read_file', 'search_in_files'}
+
+executor = ThreadPoolExecutor(max_workers=4)
+
+async def execute_tool_async(name: str, arguments: str) -> str:
+    """Wrapper async para ferramentas sync."""
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(
+        executor,
+        execute_tool,
+        name, arguments
+    )
+
+async def execute_tool_calls(tool_calls: list) -> list[dict]:
+    """Executa múltiplas tool calls, paralelo quando seguro."""
+    <span class="text-teal-400"># Separar read-only (paralelo) de write (sequencial)</span>
+    read_calls = [tc for tc in tool_calls if tc['name'] in READ_ONLY_TOOLS]
+    write_calls = [tc for tc in tool_calls if tc['name'] not in READ_ONLY_TOOLS]
+
+    results = {}
+
+    <span class="text-teal-400"># 1. Executar read-only em paralelo</span>
+    if read_calls:
+        tasks = [
+            execute_tool_async(tc['name'], tc['arguments'])
+            for tc in read_calls
+        ]
+        read_results = await asyncio.gather(*tasks)
+        for tc, result in zip(read_calls, read_results):
+            results[tc['id']] = result
+
+    <span class="text-teal-400"># 2. Executar writes sequencialmente</span>
+    for tc in write_calls:
+        result = await execute_tool_async(tc['name'], tc['arguments'])
+        results[tc['id']] = result
+
+    <span class="text-teal-400"># 3. Retornar na ordem original</span>
+    return [
+        {'tool_call_id': tc['id'], 'content': results[tc['id']]}
+        for tc in tool_calls
+    ]
+
+<span class="text-teal-400"># Uso no loop do agente:</span>
+<span class="text-teal-400"># results = asyncio.run(execute_tool_calls(response.tool_calls))</span></code></pre>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Paralelizar leituras (read_file, search) para ganhar velocidade</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar ThreadPoolExecutor para ferramentas I/O-bound</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Limitar workers para não sobrecarregar o sistema</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Retornar resultados na ordem original das tool calls</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Paralelizar write_file — dois writes no mesmo arquivo = corrompido</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Paralelizar run_shell sem pensar — comandos podem ter dependências</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Ignorar exceções em tasks paralelas — use try/except em cada uma</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Criar threads ilimitadas — max_workers=4 é um bom default</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Classe base Tool com interface uniforme: name, description, parameters, execute()</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">read_file e write_file com tratamento robusto de erros — nunca lançam exceções</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">run_shell com blacklist de comandos perigosos e timeout obrigatório</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">search_in_files com regex e glob para busca precisa no codebase</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Registry centralizado com TOOL_MAP + TOOL_SCHEMAS + execute_tool()</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-teal-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Execução paralela para reads, sequencial para writes — asyncio.gather</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-teal-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">5.3 - 🔄 Montando o Loop Principal</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-5-3.html" class="flex-1 text-center px-6 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

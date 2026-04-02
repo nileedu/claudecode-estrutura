@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 1.1 — A História: Como 512 Mil Linhas Foram Reveladas | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-emerald-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-emerald-400">Trilha 1</a>
+      <span>/</span>
+      <span class="text-emerald-400">Módulo 1.1</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MÓDULO 1.1</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">📰 A História: Como 512 Mil Linhas Foram Reveladas</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">O incidente de 31 de março de 2026 que expôs acidentalmente a arquitetura completa do agente de IA mais lucrativo do mundo — e por que isso se tornou uma oportunidade única de aprendizado.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">Básico</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">🔍 O Incidente — O que aconteceu em 31 de março de 2026</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Em 31 de março de 2026, o que deveria ser uma atualização rotineira do Claude Code se tornou um dos maiores vazamentos acidentais de código proprietário na história da IA. Um arquivo de source map de 59,8 MB, destinado à depuração interna, foi incluído inadvertidamente na versão 2.1.88 do pacote npm.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">O Vazamento em Números</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <div><span class="font-semibold text-neutral-100">Data:</span> <span class="text-neutral-300">31 de março de 2026</span></div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <div><span class="font-semibold text-neutral-100">Versão afetada:</span> <span class="text-neutral-300">@anthropic-ai/claude-code v2.1.88</span></div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <div><span class="font-semibold text-neutral-100">Arquivo:</span> <span class="text-neutral-300">Source map JavaScript (.map) de 59,8 MB</span></div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <div><span class="font-semibold text-neutral-100">Escala:</span> <span class="text-neutral-300">1.906 arquivos, 512.000+ linhas de TypeScript</span></div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <div><span class="font-semibold text-neutral-100">Descobridor:</span> <span class="text-neutral-300">Chaofan Shou (@Fried_rice), estagiário da Solayer Labs</span></div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 mt-1">&#9679;</span>
+            <div><span class="font-semibold text-neutral-100">Hora da publicação:</span> <span class="text-neutral-300">4h23 (horário do leste dos EUA)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Timeline do Incidente</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-4">
+            <span class="flex-shrink-0 w-24 text-sm font-mono text-blue-400 font-semibold">00:00 UTC</span>
+            <p class="text-neutral-300">Versão 2.1.88 publicada no npm com source maps incluídos acidentalmente no pacote de distribuição.</p>
+          </div>
+          <div class="flex items-start space-x-4">
+            <span class="flex-shrink-0 w-24 text-sm font-mono text-blue-400 font-semibold">04:23 EST</span>
+            <p class="text-neutral-300">Chaofan Shou publica a descoberta no X (Twitter), chamando atenção da comunidade de desenvolvedores e pesquisadores de segurança.</p>
+          </div>
+          <div class="flex items-start space-x-4">
+            <span class="flex-shrink-0 w-24 text-sm font-mono text-blue-400 font-semibold">Horas seguintes</span>
+            <p class="text-neutral-300">Código é replicado em 3+ repositórios no GitHub. Pesquisadores começam análise detalhada da arquitetura.</p>
+          </div>
+          <div class="flex items-start space-x-4">
+            <span class="flex-shrink-0 w-24 text-sm font-mono text-blue-400 font-semibold">Mesmo dia</span>
+            <p class="text-neutral-300">Anthropic lança nova versão removendo os arquivos .map. Repositórios espelho acumulam 1.100+ estrelas.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Não era a primeira vez</h3>
+        <p class="text-neutral-300 leading-relaxed">Um incidente semelhante ocorreu em fevereiro de 2025, quando source maps também foram incluídos inadvertidamente em uma release do Claude Code. A recorrência desse tipo de problema sugere que a configuração de build e publicação merece atenção especial em projetos que usam bundlers como o Bun — especialmente quando o bundler gera source maps por padrão e o pipeline de publicação não possui verificações automatizadas para detectar arquivos indesejados no pacote final.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">🧩 A Causa Técnica — Source maps, .npmignore e Bun</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A causa raiz foi surpreendentemente simples: uma combinação de configuração inadequada de publicação npm e comportamento padrão do bundler Bun. Entender isso é uma lição valiosa para qualquer desenvolvedor que publica pacotes.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">A Cadeia de Falhas</h3>
+        <p class="text-neutral-300 mb-4 leading-relaxed">O vazamento aconteceu por uma sequência de quatro fatores que, individualmente, seriam inofensivos, mas combinados criaram a exposição completa:</p>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-sm">1</span>
+            <p class="text-neutral-300">O <strong class="text-neutral-100">Bun</strong> (bundler usado pela Anthropic) gera source maps por padrão durante o processo de build, criando um arquivo .map com todo o código-fonte original.</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-sm">2</span>
+            <p class="text-neutral-300">O arquivo <strong class="text-neutral-100">.npmignore</strong> do projeto não excluía arquivos com extensão .map, permitindo que fossem empacotados.</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-sm">3</span>
+            <p class="text-neutral-300">O processo de <strong class="text-neutral-100">publicação no npm</strong> incluiu automaticamente o source map de 59,8 MB no pacote distribuído.</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-sm">4</span>
+            <p class="text-neutral-300">O source map continha o <strong class="text-neutral-100">código-fonte TypeScript original completo</strong> — não ofuscado, com nomes de variáveis, comentários e toda a estrutura de diretórios intacta.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Como Prevenir</h3>
+        <p class="text-neutral-300 mb-4">Para proteger seus próprios pacotes npm contra vazamentos de source maps e código-fonte:</p>
+        <ul class="space-y-2">
+          <li class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300">Adicione <code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-emerald-400">*.map</code>, <code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-emerald-400">*.js.map</code> e <code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-emerald-400">*.d.ts.map</code> ao <strong>.npmignore</strong></p>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300">Melhor ainda: use o campo <code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-emerald-400">files</code> no package.json para declarar explicitamente apenas os arquivos necessários (whitelist em vez de blacklist)</p>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300">Configure seu bundler para <strong>não gerar source maps</strong> em builds de produção</p>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300">Audite o conteúdo do pacote com <code class="bg-dark-700 px-2 py-0.5 rounded text-sm text-emerald-400">npm pack --dry-run</code> antes de cada publicação</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar campo <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs text-emerald-400">files</code> no package.json (whitelist)</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Rodar <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs text-emerald-400">npm pack --dry-run</code> antes de publicar</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Desativar source maps em builds de produção</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Auditar cada release antes do publish</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Depender apenas do .npmignore (blacklist)</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Publicar sem verificar o conteúdo do pacote</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Manter source maps ativados por padrão no bundler</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Ignorar avisos de tamanho do pacote</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">📊 Os Números — 1.904 arquivos, 512 mil linhas, US$ 19 bi</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Os números revelados pelo vazamento dimensionam a escala impressionante do Claude Code como produto e como negócio. Não estamos falando de um script simples — é uma plataforma de engenharia com impacto bilionário.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Escala do Código</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div class="bg-dark-800/60 rounded-lg p-4 text-center border border-dark-600">
+            <div class="text-2xl font-bold text-emerald-400">1.904</div>
+            <div class="text-xs text-neutral-400 mt-1">Arquivos de código-fonte</div>
+          </div>
+          <div class="bg-dark-800/60 rounded-lg p-4 text-center border border-dark-600">
+            <div class="text-2xl font-bold text-emerald-400">512K+</div>
+            <div class="text-xs text-neutral-400 mt-1">Linhas de TypeScript</div>
+          </div>
+          <div class="bg-dark-800/60 rounded-lg p-4 text-center border border-dark-600">
+            <div class="text-2xl font-bold text-emerald-400">40+</div>
+            <div class="text-xs text-neutral-400 mt-1">Ferramentas integradas</div>
+          </div>
+          <div class="bg-dark-800/60 rounded-lg p-4 text-center border border-dark-600">
+            <div class="text-2xl font-bold text-emerald-400">8</div>
+            <div class="text-xs text-neutral-400 mt-1">Subsistemas principais</div>
+          </div>
+          <div class="bg-dark-800/60 rounded-lg p-4 text-center border border-dark-600">
+            <div class="text-2xl font-bold text-emerald-400">23+</div>
+            <div class="text-xs text-neutral-400 mt-1">Checks de segurança (BashTool)</div>
+          </div>
+          <div class="bg-dark-800/60 rounded-lg p-4 text-center border border-dark-600">
+            <div class="text-2xl font-bold text-emerald-400">44</div>
+            <div class="text-xs text-neutral-400 mt-1">Feature flags</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Impacto Comercial</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold text-lg mt-0.5">$</span>
+            <div>
+              <span class="font-bold text-xl text-neutral-100">US$ 19 bilhões</span>
+              <p class="text-neutral-300 text-sm mt-1">Receita anualizada estimada da Anthropic em março de 2026, posicionando-a entre as empresas de tecnologia de crescimento mais rápido da história.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold text-lg mt-0.5">$</span>
+            <div>
+              <span class="font-bold text-xl text-neutral-100">US$ 2,5 bilhões</span>
+              <p class="text-neutral-300 text-sm mt-1">ARR (receita recorrente anual) somente do Claude Code — valor que dobrou desde o início do ano, demonstrando adoção acelerada.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold text-lg mt-0.5">%</span>
+            <div>
+              <span class="font-bold text-xl text-neutral-100">80%</span>
+              <p class="text-neutral-300 text-sm mt-1">Percentual de receita proveniente de clientes enterprise, evidenciando que o produto é validado por empresas de grande porte que dependem dele em produção.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold text-lg mt-0.5">!</span>
+            <div>
+              <p class="text-neutral-300 text-sm mt-1"><strong class="text-neutral-100">O Claude Code sozinho</strong> gera mais receita anualizada que muitas empresas de tecnologia inteiras — um indicador claro de product-market fit em ferramentas de desenvolvimento assistido por IA.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Alerta -->
+      <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-red-400 mb-3">⚠️ Contexto Competitivo</h3>
+        <p class="text-neutral-300 leading-relaxed">O vazamento forneceu aos concorrentes — desde gigantes consolidados como Microsoft (GitHub Copilot) e Google até rivais ágeis como a Cursor — um modelo literal de como construir um agente de IA eficaz. O timing foi especialmente crítico: com a velocidade de comercialização do produto e a receita em trajetória exponencial, a exposição detalhada de padrões de engenharia, sistemas de permissão, feature flags e estratégias de orquestração multi-agente representa uma vantagem informacional significativa para qualquer competidor disposto a estudar o código.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">🧠 Modelo vs CLI — A analogia do chef e da cozinha</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A distinção mais importante para entender o real impacto do vazamento: o que foi exposto foi a orquestração (o CLI), não a inteligência (o modelo). Essa diferença muda tudo.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">A Grande Distinção</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-dark-800/60 rounded-lg p-5 border border-dark-600">
+            <div class="flex items-center space-x-3 mb-3">
+              <span class="text-3xl">👨‍🍳</span>
+              <h4 class="text-lg font-bold text-emerald-400">Modelo (o chef)</h4>
+            </div>
+            <p class="text-neutral-300 text-sm leading-relaxed">A IA em si — treinamento com trilhões de tokens, pesos neurais, capacidades de raciocínio, qualidade das respostas, compreensão de código. <strong class="text-neutral-100">É o que entende, programa e decide.</strong> Nada disso foi exposto no vazamento.</p>
+          </div>
+          <div class="bg-dark-800/60 rounded-lg p-5 border border-dark-600">
+            <div class="flex items-center space-x-3 mb-3">
+              <span class="text-3xl">🍳</span>
+              <h4 class="text-lg font-bold text-emerald-400">CLI (a cozinha)</h4>
+            </div>
+            <p class="text-neutral-300 text-sm leading-relaxed">A camada que organiza o uso do modelo — fluxo de conversa, chamadas de API, uso de ferramentas, gerenciamento de contexto, coordenação de agentes, permissões, sandbox. <strong class="text-neutral-100">É o que foi exposto.</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/capa_pt.png" alt="Arquitetura do Claude Code" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">A capa do guia de arquitetura traduzido — uma visão geral dos componentes revelados.</div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Outras Analogias</h3>
+        <p class="text-neutral-300 mb-4">Para fixar a distinção entre o que foi e o que não foi vazado:</p>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Modelo = motor do carro</strong> | Vazamento = painel, câmbio, software de bordo, navegação</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Modelo = cérebro</strong> | Vazamento = corpo, sentidos, coordenação motora</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Modelo = o jogador</strong> | Vazamento = o estádio, as regras, o equipamento</p>
+          </div>
+        </div>
+        <p class="text-neutral-400 text-sm mt-4">Em todos os casos, o componente que faz a "mágica" — a inteligência — permanece protegido. O que foi exposto é valioso para engenharia, mas não replica a capacidade do modelo.</p>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Estudar a arquitetura para entender padrões de engenharia de agentes</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Aprender com as decisões de design validadas em produção</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Focar em como a orquestração complementa o modelo</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar o conhecimento para melhorar suas próprias ferramentas</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Achar que copiar o CLI dá a mesma inteligência</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Subestimar o papel do modelo nas capacidades do Claude Code</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Copiar código diretamente (direitos autorais)</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Ignorar que a parte mais valiosa é o modelo em si</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">🛡️ Resposta e Impacto — Reação da Anthropic e da comunidade</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A Anthropic reagiu rapidamente, mas a comunidade já havia se mobilizado. O episódio gerou tanto preocupações de segurança quanto oportunidades de aprendizado sem precedentes.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">Resposta Oficial</h3>
+        <p class="text-neutral-300 mb-4 leading-relaxed">A Anthropic confirmou o vazamento por e-mail aos stakeholders com a seguinte declaração:</p>
+        <blockquote class="border-l-4 border-emerald-500/50 pl-4 py-2 bg-dark-800/60 rounded-r-lg">
+          <p class="text-neutral-300 italic leading-relaxed">"Hoje mais cedo, uma versão do Claude Code continha código-fonte interno. Nenhum dado ou credencial sensível de clientes foi envolvido ou exposto. Trata-se de um problema de empacotamento causado por erro humano, e não uma violação de segurança. Estamos implementando medidas para evitar que isso aconteça novamente."</p>
+        </blockquote>
+        <p class="text-neutral-400 text-sm mt-4">A empresa enfatizou dois pontos cruciais: (1) nenhum dado de cliente foi comprometido e (2) o problema foi de empacotamento, não de segurança de infraestrutura. A nova versão sem os source maps foi publicada no mesmo dia.</p>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 Reação da Comunidade</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">3+</span>
+            <p class="text-neutral-300 text-sm">Repositórios espelho criados no GitHub em questão de horas após a publicação de Chaofan Shou</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">1.100+</span>
+            <p class="text-neutral-300 text-sm">Estrelas acumuladas nos repositórios espelho rapidamente, indicando interesse massivo da comunidade</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">claw-code</span>
+            <p class="text-neutral-300 text-sm">Projeto que reescreve a lógica central do Claude Code em Rust, demonstrando aplicação prática dos padrões</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-blue-400 font-bold mt-0.5">claude-code-kuber</span>
+            <p class="text-neutral-300 text-sm">Repositório dedicado à análise e documentação detalhada da arquitetura revelada</p>
+          </div>
+        </div>
+        <p class="text-neutral-400 text-sm mt-4">Pesquisadores de segurança também examinaram potenciais bypasses no sistema de permissões, contribuindo para o entendimento das camadas de proteção implementadas.</p>
+      </div>
+
+      <!-- Timeline -->
+      <div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+        <h3 class="text-lg font-bold text-neutral-100 mb-6">Timeline da Reação</h3>
+        <div class="relative">
+          <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-emerald-500/30"></div>
+          <div class="space-y-8">
+            <!-- Step 1 -->
+            <div class="flex items-start space-x-4 relative">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 font-bold z-10">1</div>
+              <div class="pt-1">
+                <h4 class="font-bold text-neutral-100 mb-1">Descoberta (horas)</h4>
+                <p class="text-neutral-300 text-sm leading-relaxed">Chaofan Shou identifica o source map no pacote npm e publica no X. O código se espalha rapidamente pela comunidade, com desenvolvedores baixando e extraindo o conteúdo dos arquivos .map antes que a Anthropic publique a correção.</p>
+              </div>
+            </div>
+            <!-- Step 2 -->
+            <div class="flex items-start space-x-4 relative">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 font-bold z-10">2</div>
+              <div class="pt-1">
+                <h4 class="font-bold text-neutral-100 mb-1">Análise (dias)</h4>
+                <p class="text-neutral-300 text-sm leading-relaxed">Comunidade mapeia a arquitetura completa, identifica features ocultas como <strong>Capybara</strong> (orquestração multi-agente), <strong>Undercover Mode</strong> (modo stealth para testes) e <strong>Buddy System</strong> (verificação de pares entre agentes). Pesquisadores de segurança examinam o sistema de permissões.</p>
+              </div>
+            </div>
+            <!-- Step 3 -->
+            <div class="flex items-start space-x-4 relative">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 font-bold z-10">3</div>
+              <div class="pt-1">
+                <h4 class="font-bold text-neutral-100 mb-1">Aprendizado (semanas)</h4>
+                <p class="text-neutral-300 text-sm leading-relaxed">Desenvolvedores começam a extrair padrões de engenharia e aplicar em seus próprios projetos. Surgem análises detalhadas, cursos e documentação sobre a arquitetura — transformando um incidente em material educacional sem precedentes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">📚 O Que Aprender — Por que isso é oportunidade, não problema</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O vazamento não é sobre sensacionalismo ou espionagem. É uma rara janela para estudar como um agente de IA de produção real é construído — algo que antes não tinha referência pública.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-emerald-400 mb-4">O Valor Real</h3>
+        <p class="text-neutral-300 leading-relaxed mb-4">Antes deste vazamento, não havia referência pública robusta sobre como construir um agente de IA de nível de produção. Frameworks open-source como LangChain e AutoGPT ofereciam abstrações, mas nenhum mostrava como um sistema que processa milhões de requisições diárias realmente funciona por dentro.</p>
+        <p class="text-neutral-300 leading-relaxed">O Claude Code oferece uma visão rara e validada de práticas de engenharia em larga escala: execução segura de ferramentas, gerenciamento de contexto para sessões longas, coordenação multi-agente, sistema de memória persistente, e muito mais. Cada decisão de design foi testada e refinada em produção com milhões de usuários.</p>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-blue-400 mb-4">📊 O Que Podemos Aprender</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-dark-800/40 rounded-lg p-4 border border-dark-600">
+            <h4 class="font-semibold text-blue-400 text-sm mb-2">🔒 Execução Segura</h4>
+            <p class="text-neutral-300 text-sm">Sandbox multinível + aprovação do usuário + whitelist de comandos. Mais de 23 verificações de segurança apenas na BashTool.</p>
+          </div>
+          <div class="bg-dark-800/40 rounded-lg p-4 border border-dark-600">
+            <h4 class="font-semibold text-blue-400 text-sm mb-2">🧠 Gerenciamento de Contexto</h4>
+            <p class="text-neutral-300 text-sm">Compressão automática para sessões longas, permitindo que o agente mantenha coerência mesmo em conversas extensas.</p>
+          </div>
+          <div class="bg-dark-800/40 rounded-lg p-4 border border-dark-600">
+            <h4 class="font-semibold text-blue-400 text-sm mb-2">🚩 Feature Flags</h4>
+            <p class="text-neutral-300 text-sm">44 chaves para lançamento gradual controlado, permitindo testar funcionalidades com subsets de usuários antes do rollout completo.</p>
+          </div>
+          <div class="bg-dark-800/40 rounded-lg p-4 border border-dark-600">
+            <h4 class="font-semibold text-blue-400 text-sm mb-2">📡 Telemetria</h4>
+            <p class="text-neutral-300 text-sm">Pipeline completo de observabilidade para monitorar comportamento do agente, latência, erros e padrões de uso.</p>
+          </div>
+          <div class="bg-dark-800/40 rounded-lg p-4 border border-dark-600">
+            <h4 class="font-semibold text-blue-400 text-sm mb-2">🤖 Multi-agente</h4>
+            <p class="text-neutral-300 text-sm">Padrões de comunicação e coordenação entre agentes, incluindo o sistema Capybara para orquestração paralela de tarefas.</p>
+          </div>
+          <div class="bg-dark-800/40 rounded-lg p-4 border border-dark-600">
+            <h4 class="font-semibold text-blue-400 text-sm mb-2">💾 Memória</h4>
+            <p class="text-neutral-300 text-sm">Sistema de 3 camadas com consolidação automática: memória de sessão, arquivos CLAUDE.md e memória do projeto.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Postura Correta</h3>
+        <p class="text-neutral-300 leading-relaxed mb-4">O foco deste curso é transformar o conhecimento arquitetural em aprendizado prático. <strong class="text-neutral-100">Não copiamos código — estudamos padrões.</strong> Não sensacionalizamos — extraímos valor. O diferencial maior do Claude Code ainda é o modelo Sonnet/Opus por trás, não o código CLI que o orquestra.</p>
+        <p class="text-neutral-300 leading-relaxed">Ao longo dos próximos módulos, vamos dissecar cada subsistema, entender as decisões de design, e aprender como aplicar esses padrões em nossos próprios projetos — com respeito à propriedade intelectual e foco em educação.</p>
+      </div>
+
+      <!-- Box: Referências -->
+      <div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+        <h3 class="text-lg font-bold text-neutral-100 mb-4">🔗 Referências e Recursos</h3>
+        <div class="space-y-3">
+          <a href="https://github.com/nileedu/claw-code" target="_blank" class="flex items-center space-x-3 text-emerald-400 hover:text-emerald-300 transition-colors group">
+            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            <div>
+              <span class="font-semibold group-hover:underline">nileedu/claw-code</span>
+              <p class="text-neutral-400 text-sm">Reescrita da lógica central do Claude Code em Rust</p>
+            </div>
+          </a>
+          <a href="https://github.com/nileedu/claude-code-kuber" target="_blank" class="flex items-center space-x-3 text-emerald-400 hover:text-emerald-300 transition-colors group">
+            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            <div>
+              <span class="font-semibold group-hover:underline">nileedu/claude-code-kuber</span>
+              <p class="text-neutral-400 text-sm">Análise e documentação da arquitetura do Claude Code</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O vazamento de 31/03/2026 expôs 512K linhas via source maps no npm</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">A causa foi .npmignore + Bun gerando maps por padrão</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Claude Code gera US$ 2,5 bi ARR — escala impressionante</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Modelo (chef) vs CLI (cozinha) — distinção fundamental</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Comunidade reagiu com análise e aprendizado, não destruição</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-emerald-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Este é um momento de aprendizado, não sensacionalismo</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-emerald-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">1.2 - 🏗️ Conheça a Fera: Visão Geral da Arquitetura</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-1-2.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

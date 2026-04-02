@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 3.1 — Modo Exército: Multi-Agentes e UltraPlan | Por Dentro do Claude Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124, 58, 237, 0.18); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center space-x-2 text-sm text-neutral-400">
+      <a href="../../index.html" class="hover:text-purple-400">Início</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-purple-400">Trilha 3</a>
+      <span>/</span>
+      <span class="text-purple-400">Módulo 3.1</span>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MÓDULO 3.1</span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">⚔️ Modo Exército: Multi-Agentes e UltraPlan</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">Quando um agente não é suficiente, o Claude Code implanta um exército. Um líder coordena trabalhadores especializados, e o UltraPlan teletransporta o planejamento para a nuvem.</p>
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-purple-400">6</div>
+          <div class="text-xs text-neutral-400">Tópicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-purple-400">30</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-purple-400">Avançado</div>
+          <div class="text-xs text-neutral-400">Nível</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-purple-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 1 -->
+    <!-- ============================================================ -->
+    <section id="topico-1" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">1</span>
+        <h2 class="text-2xl font-bold">👑 Líder de Equipe</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O Modo Exército do Claude Code funciona com um coordenador central — o Líder de Equipe. Ele orquestra trabalhadores especializados, roteia permissões entre eles e envia tarefas via sistema de mailbox. O líder nunca executa trabalho diretamente: sua função é planejar, distribuir e supervisionar.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_exercito_pt.png" alt="Diagrama do Modo Exército com líder e trabalhadores" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Arquitetura do Modo Exército: líder coordena trabalhadores via mailbox com roteamento de permissões.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">Como o Líder Coordena</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Planejamento centralizado</strong> — o líder recebe a tarefa principal e a decompõe em subtarefas atômicas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Roteamento de permissões</strong> — cada trabalhador recebe apenas as permissões necessárias para sua subtarefa</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Supervisão contínua</strong> — o líder monitora o progresso e pode realocar tarefas se um trabalhador falhar</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Distribuição via mailbox</strong> — comunicação assíncrona estruturada entre líder e trabalhadores</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Dica: Maximize a Eficiência do Líder</h3>
+        <p class="text-neutral-300 leading-relaxed">O líder é mais eficiente quando recebe tarefas bem definidas e decomponíveis. Evite tarefas vagas como "melhore o projeto" — prefira "refatore os 5 módulos de autenticação para usar o novo padrão de middleware". Quanto mais claro o objetivo, melhor a decomposição em subtarefas e mais eficiente a distribuição entre trabalhadores.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 2 -->
+    <!-- ============================================================ -->
+    <section id="topico-2" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">2</span>
+        <h2 class="text-2xl font-bold">📬 Sistema de Mailbox</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">A comunicação entre líder e trabalhadores acontece via mensagens estruturadas — o sistema de mailbox. Cada trabalhador tem sua caixa de entrada e pode enviar mensagens de volta ao líder. Quando um trabalhador precisa de uma permissão que não possui, ele solicita ao líder via mailbox, que decide se concede ou não.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">Anatomia de uma Mensagem</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tarefa (líder → trabalhador)</strong> — contém descrição, arquivos alvo, permissões concedidas e critérios de sucesso</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Status (trabalhador → líder)</strong> — reporta progresso, resultados parciais ou conclusão da subtarefa</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Pedido de permissão (trabalhador → líder)</strong> — quando o trabalhador precisa de acesso que não foi concedido inicialmente</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Assíncrono por design</strong> — trabalhadores não ficam bloqueados esperando resposta; continuam o que podem</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">📊 Fluxo de Comunicação</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Latência média:</strong> mensagens entre líder e trabalhador são processadas em milissegundos dentro do mesmo host</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Formato estruturado:</strong> JSON com campos padronizados — tipo, origem, destino, payload e timestamp</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Fila persistente:</strong> mensagens não se perdem se um trabalhador estiver ocupado — ficam na fila até serem consumidas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Escalabilidade:</strong> o sistema suporta dezenas de trabalhadores simultâneos sem degradação</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 3 -->
+    <!-- ============================================================ -->
+    <section id="topico-3" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">3</span>
+        <h2 class="text-2xl font-bold">🖥️ Painéis tmux/iTerm2</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Cada trabalhador do exército roda em seu próprio painel isolado — seja tmux ou iTerm2. Isso garante isolamento total de processos: um trabalhador travado não afeta os outros. Cada painel tem seu próprio stdout, stderr e estado de execução.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">tmux vs iTerm2</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">tmux (Linux/macOS)</strong> — multiplexador de terminal. Cada trabalhador em um pane separado. Funciona em servidores remotos sem GUI.</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">iTerm2 (macOS apenas)</strong> — terminal nativo com tabs. Integração mais visual, mas limitado ao macOS local.</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Isolamento de processo</strong> — cada painel é um processo independente com seu próprio PID e árvore de processos</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Fallback automático</strong> — se iTerm2 não estiver disponível, o sistema automaticamente usa tmux</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Monitorando Trabalhadores</h3>
+        <p class="text-neutral-300 leading-relaxed">Use tmux com painéis nomeados para acompanhar cada trabalhador em tempo real. O comando <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">tmux list-panes</code> mostra todos os painéis ativos. Configure layouts automáticos com <code class="bg-dark-700 px-2 py-0.5 rounded text-sm">tmux select-layout tiled</code> para visualizar todos os trabalhadores simultaneamente. No iTerm2, use a funcionalidade de broadcast para enviar comandos a todos os painéis de uma vez.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 4 -->
+    <!-- ============================================================ -->
+    <section id="topico-4" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">4</span>
+        <h2 class="text-2xl font-bold">⚡ Agentes In-Process</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Nem todo trabalhador precisa de um processo separado. Agentes in-process usam fork dentro do mesmo processo Node/Bun, com AsyncLocalStorage para isolamento de contexto. São mais leves, iniciam instantaneamente e compartilham cache — ideais para tarefas curtas e paralelas.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">Fork In-Process com AsyncLocalStorage</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Mesmo processo, contextos isolados</strong> — AsyncLocalStorage cria escopos independentes dentro do mesmo event loop</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Inicialização instantânea</strong> — sem overhead de criação de processo ou alocação de painel tmux</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Cache compartilhado</strong> — agentes in-process aproveitam o cache de prompt do processo pai automaticamente</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Propagação automática</strong> — o contexto segue através de callbacks, Promises e chains assíncronas sem vazamento</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dados/Pesquisa -->
+      <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">📊 Performance Comparada</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tempo de criação:</strong> in-process ~1ms vs tmux/iTerm2 ~200-500ms — diferença de 200x</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Uso de memória:</strong> in-process compartilha heap do processo pai vs processo separado aloca ~50-100MB novo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Cache de prompt:</strong> in-process herda 100% do cache vs processo separado começa do zero</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Trade-off:</strong> menos isolamento (crash afeta o processo pai) mas muito mais eficiente para tarefas curtas</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 5 -->
+    <!-- ============================================================ -->
+    <section id="topico-5" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">5</span>
+        <h2 class="text-2xl font-bold">☁️ UltraPlan</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">O UltraPlan é o teletransporte do Claude Code para a nuvem. Você envia um prompt, um agente remoto projeta o plano completo, você aprova pelo browser, e a execução volta para o ambiente local. É a ponte entre planejamento escalável na nuvem e execução segura na sua máquina.</p>
+
+      <!-- Diagram -->
+      <div class="my-8 rounded-xl overflow-hidden border border-dark-600">
+        <img src="../../doc/claude_code_arquitetura_pt_br/claude_code_imgs/diagrama_ultraplan_pt.png" alt="Diagrama do fluxo UltraPlan" class="w-full">
+        <div class="p-4 bg-dark-800 text-sm text-neutral-400">Fluxo completo do UltraPlan: prompt local → planejamento na nuvem → aprovação no browser → execução local.</div>
+      </div>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">Fluxo Completo do UltraPlan</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">1. Envio do prompt</strong> — você descreve a tarefa localmente; o Claude Code empacota contexto e envia para a nuvem</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">2. Planejamento remoto</strong> — um agente na nuvem analisa o contexto e projeta um plano detalhado com subtarefas</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">3. Aprovação no browser</strong> — o plano é apresentado em uma interface web para revisão e aprovação humana</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">4. Execução local</strong> — após aprovação, o plano volta para a máquina local e é executado pelo exército de agentes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box: Dica Prática -->
+      <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+        <h3 class="text-lg font-bold text-primary mb-3">💡 Quando Usar UltraPlan</h3>
+        <p class="text-neutral-300 leading-relaxed">UltraPlan brilha em tarefas complexas que exigem planejamento profundo — refatorações grandes, migrações de framework, ou reestruturações de arquitetura. O planejamento na nuvem tem acesso a mais compute e tempo de raciocínio do que o ambiente local, resultando em planos mais detalhados e menos erros de execução. Use-o quando a tarefa é grande demais para planejar em uma única sessão local.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TOPIC 6 -->
+    <!-- ============================================================ -->
+    <section id="topico-6" class="mb-16">
+      <div class="flex items-center space-x-4 mb-6">
+        <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">6</span>
+        <h2 class="text-2xl font-bold">📦 Git Bundles</h2>
+      </div>
+      <p class="text-neutral-300 mb-6 leading-relaxed">Para que o agente remoto do UltraPlan tenha contexto do seu projeto, o Claude Code usa Git Bundles para semear o ambiente na nuvem. O processo tem múltiplos fallbacks para garantir que o código chegue lá, independentemente do tamanho do repositório ou estado do working directory.</p>
+
+      <!-- Box: Conceito Principal -->
+      <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">Estratégia de Fallback dos Bundles</h3>
+        <div class="space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tentativa 1 — Histórico completo</strong> — envia o repositório inteiro como bundle, incluindo todo o histórico de commits</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tentativa 2 — Apenas HEAD</strong> — se o histórico for grande demais, envia apenas o commit atual (shallow clone)</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Tentativa 3 — Squash</strong> — comprime todos os commits em um único commit e envia como bundle mínimo</p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 mt-1">&#9679;</span>
+            <p class="text-neutral-300"><strong class="text-neutral-100">Captura de stash</strong> — alterações não commitadas são preservadas via stash e incluídas no bundle</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid: Fazer vs Evitar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+          <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Fazer
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Commitar alterações importantes antes de usar UltraPlan</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Manter o repositório limpo para bundles menores e mais rápidos</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Usar .gitignore para excluir arquivos pesados do bundle</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 mt-0.5">&#10003;</span>
+              <span class="text-neutral-300">Revisar o plano no browser antes de aprovar a execução</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+          <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            Evitar
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Enviar repositórios com binários grandes sem .gitignore</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Aprovar planos sem revisão — sempre verifique as subtarefas</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Incluir credenciais ou secrets no bundle (use .gitignore)</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 mt-0.5">&#10007;</span>
+              <span class="text-neutral-300">Usar UltraPlan para tarefas simples que um agente local resolve</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- RESUMO DO MÓDULO -->
+    <!-- ============================================================ -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+          <span class="mr-3">📋</span> Resumo do Módulo
+        </h2>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O Líder de Equipe coordena trabalhadores, distribui tarefas e roteia permissões via mailbox</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">O sistema de mailbox usa mensagens estruturadas assíncronas para comunicação líder-trabalhador</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Painéis tmux/iTerm2 garantem isolamento total de processo para cada trabalhador</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Agentes in-process com AsyncLocalStorage são 200x mais rápidos de criar e compartilham cache</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">UltraPlan teletransporta o planejamento para a nuvem com aprovação humana no browser</span>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-purple-400 font-bold mt-0.5">&#10003;</span>
+            <span class="text-neutral-300">Git Bundles semeiam o ambiente remoto com fallback progressivo: completo → HEAD → squash</span>
+          </div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+          <h3 class="font-semibold text-purple-400 mb-2">Próximo Módulo:</h3>
+          <p class="text-neutral-300">3.2 - 🌉 A Ponte</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+          <a href="modulo-3-2.html" class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors">Próximo Módulo →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Por Dentro do Claude Code - 2026</p>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light') { themeToggleDarkIcon.classList.remove('hidden'); html.classList.remove('dark'); } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>

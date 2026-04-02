@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Por Dentro do Claude Code - </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            primary: '#FACC15',
+            dark: {
+              900: '#111827',
+              800: '#1f2937',
+              700: '#374151',
+              600: '#4b5563',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Part 1 - Base */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Part 2 - All accent colors for landing page */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217, 119, 6, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217, 119, 6, 0.25); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* Part 3 - Remove gradients + special colors */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Part 4 - Nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 font-sans antialiased">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🔍</span>
+            <span class="font-bold text-lg hidden sm:inline">Por Dentro do Claude Code</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="curso/trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="curso/trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Núcleo</span>
+          </a>
+          <a href="curso/trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Avançado</span>
+          </a>
+          <a href="curso/trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Agentes</span>
+          </a>
+          <a href="curso/trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Prática</span>
+          </a>
+          <a href="curso/trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Local</span>
+          </a>
+          <!-- Theme Toggle -->
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-blue-500/5 to-purple-500/5"></div>
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+      <div class="text-center max-w-3xl mx-auto">
+        <div class="text-6xl mb-6">🔍</div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-100 tracking-tight mb-4">
+          Por Dentro do Claude Code
+        </h1>
+        <p class="text-xl sm:text-2xl text-primary font-semibold mb-6">
+          A arquitetura revelada do agente de IA mais sofisticado já construído
+        </p>
+        <p class="text-lg text-neutral-400 leading-relaxed mb-10 max-w-2xl mx-auto">
+          Em março de 2026, 512 mil linhas de código do Claude Code foram reveladas acidentalmente. Este curso transforma esse conhecimento em aprendizado prático — da arquitetura interna aos recursos secretos.
+        </p>
+        <div class="flex flex-wrap justify-center gap-6 sm:gap-10">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-neutral-100">6</div>
+            <div class="text-sm text-neutral-400 mt-1">Trilhas</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-neutral-100">24</div>
+            <div class="text-sm text-neutral-400 mt-1">Módulos</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-neutral-100">144</div>
+            <div class="text-sm text-neutral-400 mt-1">Tópicos</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-neutral-100">~12h</div>
+            <div class="text-sm text-neutral-400 mt-1">Conteúdo</div>
+          </div>
+        </div>
+
+        <!-- Imagem de Capa -->
+        <div class="mt-12 max-w-4xl mx-auto">
+          <div class="rounded-2xl overflow-hidden border border-dark-600 shadow-2xl shadow-black/40">
+            <img src="doc/ChatGPT Image 31 de mar. de 2026, 18_43_45.png" alt="VAZOU - Claude Code CLI - Todo o Código Exposto" class="w-full">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre o Curso -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-2xl sm:text-3xl font-bold text-neutral-100 mb-8 text-center">Sobre o Curso</h2>
+    <div class="max-w-3xl mx-auto bg-dark-800 rounded-2xl border border-dark-700 p-8 sm:p-10">
+      <div class="space-y-5 text-neutral-300 leading-relaxed">
+        <p>
+          Em março de 2026, um pacote npm publicado pela Anthropic acidentalmente incluiu o código-fonte completo do Claude Code — 512 mil linhas de TypeScript que revelaram a arquitetura interna do agente de IA mais avançado do mercado.
+        </p>
+        <p>
+          Pense assim: se o modelo de linguagem (Claude) é o <strong class="text-neutral-100">chef</strong>, o Claude Code é a <strong class="text-neutral-100">cozinha</strong> inteira — com receitas, utensílios, regras de segurança e logística. Até o vazamento, só conhecíamos os pratos. Agora podemos estudar como a cozinha funciona por dentro.
+        </p>
+        <p>
+          Este curso transforma essa oportunidade única em aprendizado estruturado. Ao longo de 3 trilhas, 12 módulos e 72 tópicos, você vai entender como o Claude Code gerencia conversas, orquestra ferramentas, coordena sub-agentes, protege o sistema e muito mais — conhecimento prático que vai transformar a forma como você trabalha com agentes de IA.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fontes de Referência -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-2xl sm:text-3xl font-bold text-neutral-100 mb-8 text-center">Fontes de Referência</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <a href="https://github.com/nileedu/claw-code" target="_blank" class="group block bg-dark-800 rounded-xl border border-dark-700 hover:border-primary/40 p-6 transition-all duration-200">
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-neutral-100 group-hover:text-primary transition-colors">Claw Code</h3>
+            <p class="text-sm text-neutral-400 mt-1">Reescrita em Rust da lógica central</p>
+          </div>
+        </div>
+      </a>
+      <a href="https://github.com/nileedu/claude-code-kuber" target="_blank" class="group block bg-dark-800 rounded-xl border border-dark-700 hover:border-primary/40 p-6 transition-all duration-200">
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-neutral-100 group-hover:text-primary transition-colors">Claude Code Kuber</h3>
+            <p class="text-sm text-neutral-400 mt-1">Análise e documentação da arquitetura</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Trilhas do Curso -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-2xl sm:text-3xl font-bold text-neutral-100 mb-8 text-center">Trilhas do Curso</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Trilha 1 - Fundamentos -->
+      <a href="curso/trilha1/index.html" class="group block bg-dark-800 rounded-xl border border-dark-700 hover:border-emerald-500/30 p-6 transition-all duration-200">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 font-bold text-sm">T1</span>
+          <h3 class="font-bold text-lg text-neutral-100 group-hover:text-emerald-400 transition-colors">Fundamentos</h3>
+        </div>
+        <p class="text-neutral-400 text-sm leading-relaxed mb-6">
+          Da história do vazamento à visão geral da arquitetura
+        </p>
+        <div class="flex items-center justify-between text-xs text-neutral-500">
+          <span>4 Módulos</span>
+          <span>24 Tópicos</span>
+        </div>
+      </a>
+
+      <!-- Trilha 2 - Núcleo -->
+      <a href="curso/trilha2/index.html" class="group block bg-dark-800 rounded-xl border border-dark-700 hover:border-blue-500/30 p-6 transition-all duration-200">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 font-bold text-sm">T2</span>
+          <h3 class="font-bold text-lg text-neutral-100 group-hover:text-blue-400 transition-colors">Núcleo</h3>
+        </div>
+        <p class="text-neutral-400 text-sm leading-relaxed mb-6">
+          Agentes, segurança, contexto e memória
+        </p>
+        <div class="flex items-center justify-between text-xs text-neutral-500">
+          <span>4 Módulos</span>
+          <span>24 Tópicos</span>
+        </div>
+      </a>
+
+      <!-- Trilha 3 - Avançado -->
+      <a href="curso/trilha3/index.html" class="group block bg-dark-800 rounded-xl border border-dark-700 hover:border-purple-500/30 p-6 transition-all duration-200">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 font-bold text-sm">T3</span>
+          <h3 class="font-bold text-lg text-neutral-100 group-hover:text-purple-400 transition-colors">Avançado</h3>
+        </div>
+        <p class="text-neutral-400 text-sm leading-relaxed mb-6">
+          Multi-agentes, ponte, recursos secretos e lições
+        </p>
+        <div class="flex items-center justify-between text-xs text-neutral-500">
+          <span>4 Módulos</span>
+          <span>24 Tópicos</span>
+        </div>
+      </a>
+
+      <!-- Trilha 4 - Fundamentos de Agentes -->
+      <a href="curso/trilha4/index.html" class="group block bg-dark-800 rounded-xl border border-dark-700 hover:border-amber-500/30 p-6 transition-all duration-200">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 font-bold text-sm">T4</span>
+          <h3 class="font-bold text-lg text-neutral-100 group-hover:text-amber-400 transition-colors">Fundamentos de Agentes</h3>
+        </div>
+        <p class="text-neutral-400 text-sm leading-relaxed mb-6">
+          O que é um agente, o loop fundamental, ferramentas e memória
+        </p>
+        <div class="flex items-center justify-between text-xs text-neutral-500">
+          <span>4 Módulos</span>
+          <span>24 Tópicos</span>
+        </div>
+      </a>
+
+      <!-- Trilha 5 - Construindo um Agente -->
+      <a href="curso/trilha5/index.html" class="group block bg-dark-800 rounded-xl border border-dark-700 hover:border-teal-500/30 p-6 transition-all duration-200">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-teal-500/20 text-teal-400 font-bold text-sm">T5</span>
+          <h3 class="font-bold text-lg text-neutral-100 group-hover:text-teal-400 transition-colors">Construindo um Agente</h3>
+        </div>
+        <p class="text-neutral-400 text-sm leading-relaxed mb-6">
+          Código Python real: ferramentas, memória, segurança e permissões
+        </p>
+        <div class="flex items-center justify-between text-xs text-neutral-500">
+          <span>4 Módulos</span>
+          <span>24 Tópicos</span>
+        </div>
+      </a>
+
+      <!-- Trilha 6 - Agente Local -->
+      <a href="curso/trilha6/index.html" class="group block bg-dark-800 rounded-xl border border-dark-700 hover:border-rose-500/30 p-6 transition-all duration-200">
+        <div class="flex items-center space-x-3 mb-4">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-rose-500/20 text-rose-400 font-bold text-sm">T6</span>
+          <h3 class="font-bold text-lg text-neutral-100 group-hover:text-rose-400 transition-colors">Agente Local</h3>
+        </div>
+        <p class="text-neutral-400 text-sm leading-relaxed mb-6">
+          Qwen + Ollama: construa um agente que roda 100% local
+        </p>
+        <div class="flex items-center justify-between text-xs text-neutral-500">
+          <span>4 Módulos</span>
+          <span>24 Tópicos</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- O Que Voce Vai Dominar -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-2xl sm:text-3xl font-bold text-neutral-100 mb-4 text-center">O Que Voce Vai Dominar</h2>
+    <p class="text-neutral-400 text-center mb-12 max-w-2xl mx-auto">De entender a arquitetura a construir seu proprio agente de IA rodando 100% local.</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+          <span class="text-3xl">🏗️</span>
+        </div>
+        <h3 class="font-bold text-lg text-neutral-100 mb-2">Arquitetura Real</h3>
+        <p class="text-neutral-400 text-sm leading-relaxed">512 mil linhas de codigo analisadas. Entenda como a Anthropic construiu o agente de IA mais lucrativo do mundo — US$ 2,5 bi de receita anual.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-teal-500/20 flex items-center justify-center">
+          <span class="text-3xl">🐍</span>
+        </div>
+        <h3 class="font-bold text-lg text-neutral-100 mb-2">Codigo Que Funciona</h3>
+        <p class="text-neutral-400 text-sm leading-relaxed">Nao e teoria. Voce sai do curso com um agente completo em Python — ferramentas, memoria, seguranca e permissoes — pronto para usar.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-500/20 flex items-center justify-center">
+          <span class="text-3xl">🏠</span>
+        </div>
+        <h3 class="font-bold text-lg text-neutral-100 mb-2">100% Local</h3>
+        <p class="text-neutral-400 text-sm leading-relaxed">Rode seu agente com Qwen + Ollama sem pagar nada. Privacidade total, custo zero, sem limites de API. Qwen3-Coder-Next atinge 69.6% no SWE-bench.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Numeros do Curso -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="bg-dark-800 rounded-2xl border border-dark-700 p-8 sm:p-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="text-4xl font-extrabold text-primary mb-1">144</div>
+          <div class="text-sm text-neutral-400">Topicos detalhados</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-extrabold text-primary mb-1">19</div>
+          <div class="text-sm text-neutral-400">Diagramas traduzidos</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-extrabold text-primary mb-1">512K</div>
+          <div class="text-sm text-neutral-400">Linhas analisadas</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-extrabold text-primary mb-1">$0</div>
+          <div class="text-sm text-neutral-400">Custo para rodar local</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Para Quem e Este Curso -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-2xl sm:text-3xl font-bold text-neutral-100 mb-8 text-center">Para Quem e Este Curso</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <div class="bg-dark-800 rounded-xl border border-dark-700 p-6">
+        <div class="flex items-start space-x-4">
+          <span class="text-emerald-400 text-xl mt-0.5">&#10003;</span>
+          <div>
+            <h3 class="font-semibold text-neutral-100 mb-1">Desenvolvedores Curiosos</h3>
+            <p class="text-neutral-400 text-sm">Quer entender como funciona por dentro o agente de IA que esta dominando o mercado. Nao precisa saber tudo — o curso começa do basico.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-dark-800 rounded-xl border border-dark-700 p-6">
+        <div class="flex items-start space-x-4">
+          <span class="text-emerald-400 text-xl mt-0.5">&#10003;</span>
+          <div>
+            <h3 class="font-semibold text-neutral-100 mb-1">Engenheiros de IA</h3>
+            <p class="text-neutral-400 text-sm">Quer construir seus proprios agentes. O curso vai da teoria ao codigo funcional com Python, Ollama e Qwen — tudo copiar-colar.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-dark-800 rounded-xl border border-dark-700 p-6">
+        <div class="flex items-start space-x-4">
+          <span class="text-emerald-400 text-xl mt-0.5">&#10003;</span>
+          <div>
+            <h3 class="font-semibold text-neutral-100 mb-1">Empreendedores de AI Agent</h3>
+            <p class="text-neutral-400 text-sm">Precisa de referencia de producao para construir seu produto. O Claude Code e a unica referencia publica de agente enterprise em escala.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-dark-800 rounded-xl border border-dark-700 p-6">
+        <div class="flex items-start space-x-4">
+          <span class="text-emerald-400 text-xl mt-0.5">&#10003;</span>
+          <div>
+            <h3 class="font-semibold text-neutral-100 mb-1">Entusiastas de LLMs Locais</h3>
+            <p class="text-neutral-400 text-sm">Quer rodar agentes sem depender de APIs pagas. Aprenda a usar Qwen3-Coder-Next com Ollama — 69.6% no SWE-bench, custo zero.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Jornada -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-2xl sm:text-3xl font-bold text-neutral-100 mb-12 text-center">Sua Jornada</h2>
+    <div class="max-w-3xl mx-auto space-y-8">
+      <div class="flex items-start space-x-6">
+        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+          <span class="text-emerald-400 font-bold">1</span>
+        </div>
+        <div>
+          <h3 class="font-bold text-neutral-100 mb-1">Entenda a Arquitetura</h3>
+          <p class="text-neutral-400 text-sm">Trilhas 1-3: mergulhe nos 8 subsistemas, 40+ ferramentas, 5 camadas de seguranca e recursos secretos do Claude Code.</p>
+        </div>
+      </div>
+      <div class="flex items-start space-x-6">
+        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center">
+          <span class="text-amber-400 font-bold">2</span>
+        </div>
+        <div>
+          <h3 class="font-bold text-neutral-100 mb-1">Domine os Fundamentos</h3>
+          <p class="text-neutral-400 text-sm">Trilha 4: entenda o que diferencia um agente de um chatbot — loop, ferramentas, memoria e limites de autonomia.</p>
+        </div>
+      </div>
+      <div class="flex items-start space-x-6">
+        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
+          <span class="text-teal-400 font-bold">3</span>
+        </div>
+        <div>
+          <h3 class="font-bold text-neutral-100 mb-1">Construa Seu Agente</h3>
+          <p class="text-neutral-400 text-sm">Trilha 5: codigo Python real. Saia com um agente completo — Tool Registry, MemoryManager, PermissionController e ContextCompressor.</p>
+        </div>
+      </div>
+      <div class="flex items-start space-x-6">
+        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center">
+          <span class="text-rose-400 font-bold">4</span>
+        </div>
+        <div>
+          <h3 class="font-bold text-neutral-100 mb-1">Rode 100% Local</h3>
+          <p class="text-neutral-400 text-sm">Trilha 6: Qwen + Ollama. Seu agente rodando na sua maquina, sem custo, sem limites, com privacidade total.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="bg-gradient-to-br from-dark-800 via-dark-800 to-dark-900 rounded-2xl border border-dark-600 p-8 sm:p-12 text-center">
+      <h2 class="text-2xl sm:text-3xl font-bold text-neutral-100 mb-4">Pronto para Comecar?</h2>
+      <p class="text-neutral-400 mb-8 max-w-2xl mx-auto">O conhecimento que custou US$ 19 bilhoes para construir, traduzido e organizado em 6 trilhas praticas. Comece pela arquitetura ou va direto para o codigo.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="curso/trilha1/index.html" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold transition-colors">
+          Comecar pela Arquitetura
+        </a>
+        <a href="curso/trilha4/index.html" class="px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-semibold transition-colors">
+          Ir Direto para Agentes
+        </a>
+        <a href="curso/trilha6/index.html" class="px-8 py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-semibold transition-colors">
+          Construir Local com Qwen
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">🔍</span>
+          <span class="font-bold text-neutral-300">Por Dentro do Claude Code</span>
+          <span class="text-neutral-600">|</span>
+          <a href="https://github.com/nileedu" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">nileedu</a>
+        </div>
+        <div class="flex items-center space-x-6 text-sm text-neutral-500">
+          <a href="https://github.com/nileedu/claw-code" target="_blank" class="hover:text-neutral-300 transition-colors">Claw Code</a>
+          <a href="https://github.com/nileedu/claude-code-kuber" target="_blank" class="hover:text-neutral-300 transition-colors">Claude Code Kuber</a>
+        </div>
+      </div>
+      <div class="mt-6 pt-6 border-t border-dark-700 text-center text-neutral-500 text-xs">
+        <p>Baseado na analise do codigo-fonte vazado do Claude Code (31/03/2026). Conteudo educacional — nenhum codigo proprietario foi copiado.</p>
+        <p class="mt-1">2026 — Feito com Claude Code</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>
